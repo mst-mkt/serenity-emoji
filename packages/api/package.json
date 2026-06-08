@@ -1,0 +1,10 @@
+{
+  "name": "@serenity-emoji/api",
+  "dependencies": {
+    "hono": "^4.12.23"
+  },
+  "devDependencies": {
+    "typescript": "^6.0.3",
+    "wrangler": "^4.98.0"
+  }
+}
