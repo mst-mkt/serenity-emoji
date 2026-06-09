@@ -24,7 +24,11 @@
             pnpm
           ];
 
-          shellHook = "echo \"node $(node --version), pnpm $(pnpm --version)\"";
+          shellHook = ''
+            export SSL_CERT_FILE="${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+            export NIX_SSL_CERT_FILE="$SSL_CERT_FILE"
+            echo "node $(node --version), pnpm $(pnpm --version)"
+          '';
         };
       });
     };
