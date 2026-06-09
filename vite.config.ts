@@ -5,7 +5,7 @@ export default defineConfig({
     '*': 'vp check --fix',
   },
   test: {
-    include: ['./**/*.test.{ts,tsx}'],
+    include: ['./src/**/*.test.{ts,tsx}'],
   },
   fmt: {
     semi: false,
@@ -16,6 +16,7 @@ export default defineConfig({
     },
   },
   lint: {
+    ignorePatterns: ['cloudflare-env.d.ts'],
     options: {
       typeAware: true,
       typeCheck: true,
