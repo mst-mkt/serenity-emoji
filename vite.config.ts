@@ -1,6 +1,14 @@
 import { defineConfig } from 'vite-plus'
 
 export default defineConfig({
+  run: {
+    tasks: {
+      dev: {
+        command: 'wrangler dev',
+        cache: false,
+      },
+    },
+  },
   staged: {
     '*': 'vp check --fix',
   },
