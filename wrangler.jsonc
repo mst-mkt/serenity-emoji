@@ -13,6 +13,18 @@
       "enabled": true,
     },
   },
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "64d2272c32b14f84b8e8e62f04f2cc60",
+    },
+  ],
+  "r2_buckets": [
+    {
+      "binding": "R2",
+      "bucket_name": "serenity-emoji",
+    },
+  ],
   "workers_dev": false,
   "routes": [
     {
