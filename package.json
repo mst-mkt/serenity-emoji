@@ -7,8 +7,10 @@
     "prepare": "vp config"
   },
   "dependencies": {
+    "@hono/standard-validator": "^0.2.2",
     "hono": "^4.12.24",
-    "kuron": "^0.0.3"
+    "kuron": "^0.0.3",
+    "valibot": "^1.4.1"
   },
   "devDependencies": {
     "@types/node": "^25.9.2",
