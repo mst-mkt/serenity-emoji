@@ -7,6 +7,10 @@ export default defineConfig({
         command: 'wrangler dev',
         cache: false,
       },
+      'gen:types': {
+        command: 'wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts',
+        cache: false,
+      },
     },
   },
   staged: {
