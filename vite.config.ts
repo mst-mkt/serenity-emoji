@@ -11,6 +11,10 @@ export default defineConfig({
         command: 'wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts',
         cache: false,
       },
+      deploy: {
+        command: 'wrangler deploy',
+        cache: false,
+      },
     },
   },
   staged: {
