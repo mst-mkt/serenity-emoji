@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { concat, crc32 } from './bytes.ts'
+import { concat, crc32 } from './bytes'
 
 describe('concat', () => {
   it('merges buffers in order', () => {

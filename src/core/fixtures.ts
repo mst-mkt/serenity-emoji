@@ -1,5 +1,5 @@
-import { crc32 } from './decode/bytes.ts'
-import { SIGNATURE } from './decode/chunks.ts'
+import { crc32 } from './decode/bytes'
+import { SIGNATURE } from './decode/chunks'
 
 const u32 = (n: number) => [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255]
 

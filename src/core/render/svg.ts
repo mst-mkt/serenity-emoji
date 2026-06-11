@@ -1,5 +1,5 @@
-import type { DotGrid, Rgba } from '../dot-grid.ts'
-import { dimensionsOf, fitTo, type SizeOptions } from './utils/scale.ts'
+import type { DotGrid, Rgba } from '../dot-grid'
+import { dimensionsOf, fitTo, type SizeOptions } from './utils/scale'
 
 // a horizontal run of identical pixels, drawn as one rect
 type Run = { x: number; width: number; color: Rgba }

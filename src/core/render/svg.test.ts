@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { rgba } from '../fixtures.ts'
-import { toSvg } from './svg.ts'
+import { rgba } from '../fixtures'
+import { toSvg } from './svg'
 
 const CLEAR = rgba(0, 0, 0, 0)
 

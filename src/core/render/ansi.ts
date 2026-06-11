@@ -1,4 +1,4 @@
-import type { DotGrid, Rgba } from '../dot-grid.ts'
+import type { DotGrid, Rgba } from '../dot-grid'
 
 // a terminal color: an Rgba, or null for the terminal default
 type Paint = Rgba | null

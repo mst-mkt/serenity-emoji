@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { chunk, deflate, fromBase64, HEART, ihdr, png, rgba } from '../fixtures.ts'
-import { decodePng } from './index.ts'
+import { chunk, deflate, fromBase64, HEART, ihdr, png, rgba } from '../fixtures'
+import { decodePng } from './index'
 
 const heart = fromBase64(HEART)
 

@@ -1,6 +1,6 @@
-import { type DecodeOptions, parseChunks } from './chunks.ts'
-import { toPixels } from './pixels.ts'
-import { toScanlines } from './scanlines.ts'
+import { type DecodeOptions, parseChunks } from './chunks'
+import { toPixels } from './pixels'
+import { toScanlines } from './scanlines'
 
 // PNG bytes -> chunks -> scanlines -> pixels -> DotGrid
 export const decodePng = async (bytes: Uint8Array, options: DecodeOptions = {}) => {

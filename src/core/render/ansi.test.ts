@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { rgba } from '../fixtures.ts'
-import { toAnsi } from './ansi.ts'
+import { rgba } from '../fixtures'
+import { toAnsi } from './ansi'
 
 const CLEAR = rgba(0, 0, 0, 0)
 

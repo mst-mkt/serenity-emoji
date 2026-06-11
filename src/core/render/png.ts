@@ -1,7 +1,7 @@
-import { concat, crc32 } from '../decode/bytes.ts'
-import { SIGNATURE } from '../decode/chunks.ts'
-import type { DotGrid, Rgba } from '../dot-grid.ts'
-import { dimensionsOf, scaleToFit, type SizeOptions } from './utils/scale.ts'
+import { concat, crc32 } from '../decode/bytes'
+import { SIGNATURE } from '../decode/chunks'
+import type { DotGrid, Rgba } from '../dot-grid'
+import { dimensionsOf, scaleToFit, type SizeOptions } from './utils/scale'
 
 const u32 = (n: number) => {
   return Uint8Array.from([(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255])

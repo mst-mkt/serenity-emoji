@@ -1,4 +1,4 @@
-import { concat } from './bytes.ts'
+import { concat } from './bytes'
 
 type LineMeta = { width: number; height: number; depth: number; channels: number }
 
