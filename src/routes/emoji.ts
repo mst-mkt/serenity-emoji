@@ -11,6 +11,7 @@ import { scaleToFit } from '../core/render/utils/scale'
 import { findGrid } from '../storage'
 
 const CACHE_CONTROL = 'public, max-age=3600'
+const DEFAULT_PNG_SIZE = 512
 
 const ParamSchema = v.object({
   emoji: v.pipe(v.string(), v.transform(toStem)),
@@ -37,7 +38,8 @@ export const emojiRoutes = new Hono<AppEnv>()
       return c.text(ansi, 200, { 'cache-control': CACHE_CONTROL, vary: 'user-agent' })
     }
 
-    const png = await toPng(grid, { size })
+    const pngSize = size ?? DEFAULT_PNG_SIZE
+    const png = await toPng(grid, { size: pngSize })
     return c.body(png, 200, {
       'content-type': 'image/png',
       'cache-control': CACHE_CONTROL,
@@ -84,7 +86,8 @@ export const emojiRoutes = new Hono<AppEnv>()
       if (grid === null) return c.text('emoji not found', 404)
 
       const { size } = c.req.valid('query')
-      const png = await toPng(grid, { size })
+      const pngSize = size ?? DEFAULT_PNG_SIZE
+      const png = await toPng(grid, { size: pngSize })
 
       return c.body(png, 200, { 'content-type': 'image/png', 'cache-control': CACHE_CONTROL })
     },
