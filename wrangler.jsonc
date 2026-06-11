@@ -25,6 +25,9 @@
       "bucket_name": "serenity-emoji",
     },
   ],
+  "secrets": {
+    "required": ["GITHUB_TOKEN"],
+  },
   "workers_dev": false,
   "routes": [
     {
