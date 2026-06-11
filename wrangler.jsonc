@@ -25,6 +25,9 @@
       "bucket_name": "serenity-emoji",
     },
   ],
+  "triggers": {
+    "crons": ["0 * * * *"],
+  },
   "secrets": {
     "required": ["GITHUB_TOKEN"],
   },
