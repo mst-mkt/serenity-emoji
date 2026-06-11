@@ -23,6 +23,27 @@ const QuerySchema = v.object({
 })
 
 export const emojiRoutes = new Hono<AppEnv>()
+  .get('/:emoji', sValidator('param', ParamSchema), sValidator('query', QuerySchema), async (c) => {
+    const { emoji: stem } = c.req.valid('param')
+    const grid = await findGrid(c.env.KV, stem)
+    if (grid === null) return c.text('emoji not found', 404)
+
+    const { size } = c.req.valid('query')
+    const userAgent = c.req.header('user-agent')
+    const isCurl = userAgent?.startsWith('curl/') ?? false
+
+    if (isCurl) {
+      const ansi = toAnsi(scaleToFit(grid, size))
+      return c.text(ansi, 200, { 'cache-control': CACHE_CONTROL, vary: 'user-agent' })
+    }
+
+    const png = await toPng(grid, { size })
+    return c.body(png, 200, {
+      'content-type': 'image/png',
+      'cache-control': CACHE_CONTROL,
+      vary: 'user-agent',
+    })
+  })
   .get(
     '/:emoji/json',
     sValidator('param', ParamSchema),
