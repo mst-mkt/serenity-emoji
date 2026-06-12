@@ -8,15 +8,15 @@
   },
   "dependencies": {
     "@hono/standard-validator": "^0.2.2",
-    "hono": "^4.12.24",
+    "hono": "^4.12.25",
     "kuron": "^0.0.3",
     "valibot": "^1.4.1"
   },
   "devDependencies": {
-    "@types/node": "^25.9.2",
-    "@typescript/native-preview": "7.0.0-dev.20260608.1",
+    "@types/node": "^25.9.3",
+    "@typescript/native-preview": "7.0.0-dev.20260611.2",
     "vite-plus": "^0.1.24",
-    "wrangler": "^4.98.0"
+    "wrangler": "^4.100.0"
   },
   "packageManager": "pnpm@11.5.2"
 }
