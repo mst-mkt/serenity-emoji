@@ -1,22 +1,33 @@
 import { env } from 'cloudflare:workers'
 
-const LATEST_KEY = 'font/serenity-emoji.full.ttf'
-const keyOf = (digest: string) => `font/serenity-emoji.full.${digest}.ttf`
+import { sha256Hex } from '../core/digest'
+import type { FontFormat } from './font-file'
+
+const latestKeyOf = (format: FontFormat) => `font/serenity-emoji.full.${format}`
+const keyOf = (digest: string, format: FontFormat) => `font/serenity-emoji.full.${digest}.${format}`
 const fileKeyOf = (file: string) => `font/${file}`
 
-export const FONT_CONTENT_TYPE = 'font/ttf'
+export const FONT_CONTENT_TYPES = {
+  ttf: 'font/ttf',
+  woff: 'font/woff',
+} as const satisfies Record<FontFormat, string>
+
 export const IMMUTABLE_CACHE = 'public, max-age=31536000, immutable'
 export const LATEST_CACHE = 'public, max-age=86400'
 
 export const getFont = (file: string) => env.R2.get(fileKeyOf(file))
 
-export const putFont = (ttf: Uint8Array, digest: string) => {
-  return Promise.all([
-    env.R2.put(keyOf(digest), ttf, {
-      httpMetadata: { contentType: FONT_CONTENT_TYPE, cacheControl: IMMUTABLE_CACHE },
+export const putFont = async (font: Uint8Array, format: FontFormat) => {
+  const hex = await sha256Hex(font)
+  const digest = hex.slice(0, 16)
+  const contentType = FONT_CONTENT_TYPES[format]
+
+  await Promise.all([
+    env.R2.put(keyOf(digest, format), font, {
+      httpMetadata: { contentType, cacheControl: IMMUTABLE_CACHE },
     }),
-    env.R2.put(LATEST_KEY, ttf, {
-      httpMetadata: { contentType: FONT_CONTENT_TYPE, cacheControl: LATEST_CACHE },
+    env.R2.put(latestKeyOf(format), font, {
+      httpMetadata: { contentType, cacheControl: LATEST_CACHE },
       customMetadata: { digest },
     }),
   ])

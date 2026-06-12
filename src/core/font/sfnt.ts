@@ -2,12 +2,14 @@ import { concat } from '../decode/bytes'
 import { checksum, pad4, prefixSums, tag, u16, u32 } from './write'
 
 export type Table = { tag: string; data: Uint8Array }
+export type Sfnt = ReturnType<typeof assembleSfnt>
 
 const HEADER_SIZE = 12
 const RECORD_SIZE = 16
 const CHECKSUM_MAGIC = 0xb1b0afba
 
-export const toSfnt = (tables: Table[]) => {
+// sorted/offsets/checksums describe the assembled font, so woff packaging reuses them as-is
+export const assembleSfnt = (tables: Table[]) => {
   const sorted = tables.toSorted((a, b) => (a.tag < b.tag ? -1 : 1))
   const padded = sorted.map(({ data }) => pad4(data))
   const tableStart = HEADER_SIZE + sorted.length * RECORD_SIZE
@@ -15,6 +17,7 @@ export const toSfnt = (tables: Table[]) => {
     padded.map(({ length }) => length),
     tableStart,
   )
+  const checksums = sorted.map(({ data }) => checksum(data))
 
   const entrySelector = Math.floor(Math.log2(sorted.length))
   const searchRange = 2 ** entrySelector * 16
@@ -27,7 +30,7 @@ export const toSfnt = (tables: Table[]) => {
   ])
   const records = concat(
     sorted.map(({ tag: name, data }, index) =>
-      concat([tag(name), u32(checksum(data)), u32(offsets[index]), u32(data.length)]),
+      concat([tag(name), u32(checksums[index]), u32(offsets[index]), u32(data.length)]),
     ),
   )
 
@@ -39,5 +42,7 @@ export const toSfnt = (tables: Table[]) => {
     font.set(u32(adjustment), offsets[headIndex] + 8)
   }
 
-  return font
+  return { font, sorted, offsets, checksums }
 }
+
+export const toSfnt = (tables: Table[]) => assembleSfnt(tables).font

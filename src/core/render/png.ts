@@ -1,6 +1,7 @@
 import { concat, crc32 } from '../decode/bytes'
 import { SIGNATURE } from '../decode/chunks'
 import type { DotGrid, Rgba } from '../dot-grid'
+import { deflate } from '../zlib'
 import { dimensionsOf, scaleToFit, type SizeOptions } from './utils/scale'
 
 const u32 = (n: number) => {
@@ -15,12 +16,6 @@ const chunk = (type: string, data: Uint8Array) => {
 // 8-bit RGBA (color type 6), no interlace
 const ihdr = (width: number, height: number) =>
   chunk('IHDR', Uint8Array.from([...u32(width), ...u32(height), 8, 6, 0, 0, 0]))
-
-// zlib deflate via web standard API (works on both Workers and Node)
-const deflate = async (data: Uint8Array<ArrayBuffer>) => {
-  const stream = new Response(data).body?.pipeThrough(new CompressionStream('deflate'))
-  return new Uint8Array(await new Response(stream).arrayBuffer())
-}
 
 // filter type None; missing pixels in ragged rows stay transparent
 const toScanline = (row: Rgba[], width: number) => {

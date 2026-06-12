@@ -1,6 +1,6 @@
 import type { DotGrid } from '../dot-grid'
 import { planFont } from './plan'
-import { toSfnt } from './sfnt'
+import { assembleSfnt } from './sfnt'
 import { buildCmap } from './tables/cmap'
 import { buildColr, buildCpal } from './tables/colr'
 import { buildGlyf } from './tables/glyf'
@@ -14,9 +14,9 @@ import {
   buildOs2,
   buildPost,
 } from './tables/metadata'
+import { toWoff } from './woff'
 
-// glyph set -> sfnt tables; toWoff over the same tables comes later
-export const buildTables = (grids: Map<string, DotGrid>) => {
+const buildTables = (grids: Map<string, DotGrid>) => {
   const plan = planFont(grids)
   const { glyf, loca, bounds } = buildGlyf(plan.glyphs)
 
@@ -46,4 +46,9 @@ export const buildTables = (grids: Map<string, DotGrid>) => {
   ]
 }
 
-export const toTtf = (grids: Map<string, DotGrid>) => toSfnt(buildTables(grids))
+export const buildFonts = async (grids: Map<string, DotGrid>) => {
+  const sfnt = assembleSfnt(buildTables(grids))
+  const woff = await toWoff(sfnt)
+
+  return { ttf: sfnt.font, woff }
+}

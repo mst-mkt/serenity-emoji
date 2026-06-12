@@ -1,5 +1,6 @@
 import { crc32 } from './decode/bytes'
 import { SIGNATURE } from './decode/chunks'
+import { deflate as deflateBytes } from './zlib'
 
 const u32 = (n: number) => [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255]
 
@@ -11,11 +12,13 @@ export const fromBase64 = (b64: string) => Uint8Array.from(atob(b64), (c) => c.c
 
 export const rgba = (r: number, g: number, b: number, a = 255) => ({ r, g, b, a })
 
-export const deflate = async (data: number[]) => {
-  const stream = new Response(new Uint8Array(data)).body?.pipeThrough(
-    new CompressionStream('deflate'),
-  )
-  return new Uint8Array(await new Response(stream).arrayBuffer())
+export const deflate = (data: number[]) => deflateBytes(Uint8Array.from(data))
+
+export const inflate = async (data: Uint8Array) => {
+  const stream = new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate'))
+  const original = await new Response(stream).arrayBuffer()
+
+  return new Uint8Array(original)
 }
 
 export const chunk = (type: string, data: number[]) => {

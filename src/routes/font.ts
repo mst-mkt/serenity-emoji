@@ -2,7 +2,7 @@ import { Hono } from 'hono'
 
 import type { AppEnv } from '../bindings'
 import { parseFontFile } from '../storage/font-file'
-import { FONT_CONTENT_TYPE, getFont, IMMUTABLE_CACHE, LATEST_CACHE } from '../storage/fonts'
+import { FONT_CONTENT_TYPES, getFont, IMMUTABLE_CACHE, LATEST_CACHE } from '../storage/fonts'
 
 export const fontRoutes = new Hono<AppEnv>().get('/font/:file', async (c) => {
   const file = c.req.param('file')
@@ -15,7 +15,7 @@ export const fontRoutes = new Hono<AppEnv>().get('/font/:file', async (c) => {
   const cacheControl = parsed.digest === null ? LATEST_CACHE : IMMUTABLE_CACHE
 
   return c.body(object.body, 200, {
-    'content-type': FONT_CONTENT_TYPE,
+    'content-type': FONT_CONTENT_TYPES[parsed.format],
     'cache-control': cacheControl,
     etag: object.httpEtag,
   })

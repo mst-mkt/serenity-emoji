@@ -1,9 +1,8 @@
 import type { CronHandler } from 'kuron'
 
 import type { AppEnv } from '../bindings'
-import { sha256Hex } from '../core/digest'
 import type { DotGrid } from '../core/dot-grid'
-import { toTtf } from '../core/font/index'
+import { buildFonts } from '../core/font/index'
 import { getFontBuilt, getFontTarget, putFont, putFontBuilt, putFontTarget } from '../storage/fonts'
 import { listGrids } from '../storage/grids'
 import { getSnapshot } from '../storage/snapshot'
@@ -30,10 +29,8 @@ export const handleFontBuild: CronHandler<AppEnv> = async () => {
   if (snapshot.size === 0) return
 
   const gridEntries: [string, DotGrid][] = [...snapshot].map(([name, { grid }]) => [name, grid])
-  const ttf = toTtf(new Map(gridEntries))
-  const hex = await sha256Hex(ttf)
-  const digest = hex.slice(0, 16)
+  const { ttf, woff } = await buildFonts(new Map(gridEntries))
 
-  await putFont(ttf, digest)
+  await Promise.all([putFont(ttf, 'ttf'), putFont(woff, 'woff')])
   await putFontBuilt(target)
 }
