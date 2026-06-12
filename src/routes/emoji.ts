@@ -8,7 +8,7 @@ import { toAnsi } from '../core/render/ansi'
 import { toPng } from '../core/render/png'
 import { toSvg } from '../core/render/svg'
 import { scaleToFit } from '../core/render/utils/scale'
-import { findGrid } from '../storage'
+import { findGrid } from '../storage/grids'
 
 const CACHE_CONTROL = 'public, max-age=3600'
 const DEFAULT_PNG_SIZE = 512
@@ -26,7 +26,7 @@ const QuerySchema = v.object({
 export const emojiRoutes = new Hono<AppEnv>()
   .get('/:emoji', sValidator('param', ParamSchema), sValidator('query', QuerySchema), async (c) => {
     const { emoji: stem } = c.req.valid('param')
-    const grid = await findGrid(c.env.KV, stem)
+    const grid = await findGrid(stem)
     if (grid === null) return c.text('emoji not found', 404)
 
     const { size } = c.req.valid('query')
@@ -52,7 +52,7 @@ export const emojiRoutes = new Hono<AppEnv>()
     sValidator('query', QuerySchema),
     async (c) => {
       const { emoji: stem } = c.req.valid('param')
-      const grid = await findGrid(c.env.KV, stem)
+      const grid = await findGrid(stem)
       if (grid === null) return c.text('emoji not found', 404)
 
       const { size } = c.req.valid('query')
@@ -67,7 +67,7 @@ export const emojiRoutes = new Hono<AppEnv>()
     sValidator('query', QuerySchema),
     async (c) => {
       const { emoji: stem } = c.req.valid('param')
-      const grid = await findGrid(c.env.KV, stem)
+      const grid = await findGrid(stem)
       if (grid === null) return c.text('emoji not found', 404)
 
       const { size } = c.req.valid('query')
@@ -82,7 +82,7 @@ export const emojiRoutes = new Hono<AppEnv>()
     sValidator('query', QuerySchema),
     async (c) => {
       const { emoji: stem } = c.req.valid('param')
-      const grid = await findGrid(c.env.KV, stem)
+      const grid = await findGrid(stem)
       if (grid === null) return c.text('emoji not found', 404)
 
       const { size } = c.req.valid('query')
@@ -98,7 +98,7 @@ export const emojiRoutes = new Hono<AppEnv>()
     sValidator('query', QuerySchema),
     async (c) => {
       const { emoji: stem } = c.req.valid('param')
-      const grid = await findGrid(c.env.KV, stem)
+      const grid = await findGrid(stem)
       if (grid === null) return c.text('emoji not found', 404)
 
       const { size } = c.req.valid('query')

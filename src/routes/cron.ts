@@ -1,32 +1,39 @@
 import type { CronHandler } from 'kuron'
 
 import type { AppEnv } from '../bindings'
-import { decodePng } from '../core/decode/index'
-import { deleteGrid, listGrids, putGrid } from '../storage'
-import { fetchEmojiPng, fetchEmojiTree, fetchHead } from '../sync/github'
-import { planSync } from '../sync/plan'
+import { sha256Hex } from '../core/digest'
+import type { DotGrid } from '../core/dot-grid'
+import { toTtf } from '../core/font/index'
+import { getFontBuilt, getFontTarget, putFont, putFontBuilt, putFontTarget } from '../storage/fonts'
+import { listGrids } from '../storage/grids'
+import { getSnapshot } from '../storage/snapshot'
+import { applyTree, syncSnapshot } from '../sync/apply'
+import { fetchEmojiTree, fetchHead } from '../sync/github'
 
-const MAX_DIMENSION = 512
-const BATCH_LIMIT = 100
-
-export const handleSync: CronHandler<AppEnv> = async (c) => {
+export const handleSync: CronHandler<AppEnv> = async () => {
   const commit = await fetchHead()
-  const [tree, stored] = await Promise.all([fetchEmojiTree(commit), listGrids(c.env.KV)])
-  const { puts, deletes, remaining } = planSync(tree, stored, BATCH_LIMIT)
-  if (remaining > 0) console.log(`sync backlog: ${remaining} entries remaining`)
+  const [tree, stored] = await Promise.all([fetchEmojiTree(commit), listGrids()])
 
-  await Promise.all(deletes.map((name) => deleteGrid(c.env.KV, name)))
-  const results = await Promise.allSettled(
-    puts.map(async ({ name, sha }) => {
-      const bytes = await fetchEmojiPng(commit, name)
-      const grid = await decodePng(bytes, { maxDimension: MAX_DIMENSION })
-      await putGrid(c.env.KV, name, grid, sha)
-    }),
-  )
+  const applied = await applyTree(commit, tree, stored)
+  const { changed, complete, digest } = await syncSnapshot(tree, stored, applied)
 
-  const failures = results.filter((result) => result.status === 'rejected')
+  if (changed && complete) await putFontTarget(digest)
+}
 
-  for (const failure of failures) {
-    console.error('sync failure:', failure.reason)
-  }
+export const handleFontBuild: CronHandler<AppEnv> = async () => {
+  const [target, built] = await Promise.all([getFontTarget(), getFontBuilt()])
+
+  const needsBuild = target !== null && target !== built
+  if (!needsBuild) return
+
+  const snapshot = await getSnapshot()
+  if (snapshot.size === 0) return
+
+  const gridEntries: [string, DotGrid][] = [...snapshot].map(([name, { grid }]) => [name, grid])
+  const ttf = toTtf(new Map(gridEntries))
+  const hex = await sha256Hex(ttf)
+  const digest = hex.slice(0, 16)
+
+  await putFont(ttf, digest)
+  await putFontBuilt(target)
 }

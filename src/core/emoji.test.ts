@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { hasPrivateUse, toStem, withoutVariationSelectors } from './emoji'
+import { hasPrivateUse, toCodePoints, toStem, withoutVariationSelectors } from './emoji'
 
 describe('toStem', () => {
   it('converts a single codepoint emoji', () => {
@@ -33,6 +33,24 @@ describe('toStem', () => {
     const stem = toStem(emoji)
 
     expect(stem).toBe('U+2764_U+FE0F')
+  })
+})
+
+describe('toCodePoints', () => {
+  it('parses a single unit stem', () => {
+    const stem = 'U+1F600'
+
+    const codePoints = toCodePoints(stem)
+
+    expect(codePoints).toEqual([0x1f600])
+  })
+
+  it('parses every unit of a sequence stem', () => {
+    const stem = 'U+2764_U+FE0F_U+200D_U+1F525'
+
+    const codePoints = toCodePoints(stem)
+
+    expect(codePoints).toEqual([0x2764, 0xfe0f, 0x200d, 0x1f525])
   })
 })
 

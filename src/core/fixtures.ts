@@ -35,3 +35,12 @@ export const ihdr = ({
   chunk('IHDR', [...u32(width), ...u32(height), depth, colorType, compression, filter, interlace])
 
 export const png = (...parts: number[][]) => Uint8Array.from([...SIGNATURE, ...parts.flat()])
+
+export const u16At = (data: Uint8Array, offset: number) =>
+  ((data.at(offset) ?? 0) << 8) | (data.at(offset + 1) ?? 0)
+
+export const u32At = (data: Uint8Array, offset: number) =>
+  u16At(data, offset) * 0x10000 + u16At(data, offset + 2)
+
+export const tagAt = (data: Uint8Array, offset: number) =>
+  String.fromCharCode(...data.subarray(offset, offset + 4))

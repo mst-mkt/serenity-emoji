@@ -16,17 +16,21 @@ const isPrivateUse = (codePoint: number) => {
   return ranges.some(([min, max]) => codePoint >= min && codePoint <= max)
 }
 
-export const hasPrivateUse = (stem: string) => {
-  const codePoints = stem.split('_').map((unit) => Number.parseInt(unit.slice(2), 16))
-  return codePoints.some(isPrivateUse)
+export const toCodePoints = (stem: string) => {
+  return stem.split('_').map((unit) => Number.parseInt(unit.slice(2), 16))
 }
 
-const VARIATION_SELECTOR = 'U+FE0F'
+export const hasPrivateUse = (stem: string) => {
+  return toCodePoints(stem).some(isPrivateUse)
+}
+
+export const VARIATION_SELECTOR = 0xfe0f
+const VARIATION_SELECTOR_UNIT = toUnit(VARIATION_SELECTOR)
 
 export const withoutVariationSelectors = (stem: string) => {
   const withoutVariationSelectors = stem
     .split('_')
-    .filter((unit) => unit !== VARIATION_SELECTOR)
+    .filter((unit) => unit !== VARIATION_SELECTOR_UNIT)
     .join('_')
 
   return withoutVariationSelectors
