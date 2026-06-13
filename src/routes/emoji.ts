@@ -5,6 +5,7 @@ import * as v from 'valibot'
 import type { AppEnv } from '../bindings'
 import { toStem } from '../domain/emoji'
 import { scaleToFit } from '../domain/image/scale'
+import { toSquare } from '../domain/image/square'
 import { toAnsi } from '../domain/render/ansi'
 import { toPng } from '../domain/render/png'
 import { toSvg } from '../domain/render/svg'
@@ -22,16 +23,27 @@ const QuerySchema = v.object({
   size: v.optional(
     v.pipe(v.string(), v.transform(Number), v.integer(), v.minValue(1), v.maxValue(2048)),
   ),
+  square: v.optional(
+    v.pipe(
+      v.string(),
+      v.transform((value: string) => value === '' || value === 'true' || value === '1'),
+    ),
+  ),
 })
+
+const loadGrid = async (stem: string, square: boolean | undefined) => {
+  const grid = await findGrid(stem)
+  return grid === null || !square ? grid : toSquare(grid)
+}
 
 export const emojiRoutes = new Hono<AppEnv>()
   .use(licenseHeaderMiddleware)
   .get('/:emoji', sValidator('param', ParamSchema), sValidator('query', QuerySchema), async (c) => {
     const { emoji: stem } = c.req.valid('param')
-    const grid = await findGrid(stem)
+    const { size, square } = c.req.valid('query')
+    const grid = await loadGrid(stem, square)
     if (grid === null) return c.text('emoji not found', 404)
 
-    const { size } = c.req.valid('query')
     const userAgent = c.req.header('user-agent')
     const isCurl = userAgent?.startsWith('curl/') ?? false
 
@@ -54,10 +66,10 @@ export const emojiRoutes = new Hono<AppEnv>()
     sValidator('query', QuerySchema),
     async (c) => {
       const { emoji: stem } = c.req.valid('param')
-      const grid = await findGrid(stem)
+      const { size, square } = c.req.valid('query')
+      const grid = await loadGrid(stem, square)
       if (grid === null) return c.text('emoji not found', 404)
 
-      const { size } = c.req.valid('query')
       const scaled = scaleToFit(grid, size)
 
       return c.json(scaled, 200, { 'cache-control': CACHE_CONTROL })
@@ -69,10 +81,10 @@ export const emojiRoutes = new Hono<AppEnv>()
     sValidator('query', QuerySchema),
     async (c) => {
       const { emoji: stem } = c.req.valid('param')
-      const grid = await findGrid(stem)
+      const { size, square } = c.req.valid('query')
+      const grid = await loadGrid(stem, square)
       if (grid === null) return c.text('emoji not found', 404)
 
-      const { size } = c.req.valid('query')
       const scaled = scaleToFit(grid, size)
 
       return c.text(toAnsi(scaled), 200, { 'cache-control': CACHE_CONTROL })
@@ -84,10 +96,10 @@ export const emojiRoutes = new Hono<AppEnv>()
     sValidator('query', QuerySchema),
     async (c) => {
       const { emoji: stem } = c.req.valid('param')
-      const grid = await findGrid(stem)
+      const { size, square } = c.req.valid('query')
+      const grid = await loadGrid(stem, square)
       if (grid === null) return c.text('emoji not found', 404)
 
-      const { size } = c.req.valid('query')
       const pngSize = size ?? DEFAULT_PNG_SIZE
       const png = await toPng(grid, { size: pngSize })
 
@@ -100,10 +112,10 @@ export const emojiRoutes = new Hono<AppEnv>()
     sValidator('query', QuerySchema),
     async (c) => {
       const { emoji: stem } = c.req.valid('param')
-      const grid = await findGrid(stem)
+      const { size, square } = c.req.valid('query')
+      const grid = await loadGrid(stem, square)
       if (grid === null) return c.text('emoji not found', 404)
 
-      const { size } = c.req.valid('query')
       const svg = toSvg(grid, { size })
 
       return c.body(svg, 200, { 'content-type': 'image/svg+xml', 'cache-control': CACHE_CONTROL })
