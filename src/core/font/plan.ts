@@ -1,33 +1,37 @@
 import type { DotGrid, Rgba } from '../dot-grid'
 import { toCodePoints, VARIATION_SELECTOR } from '../emoji'
-import { colorKey, type Rect, toGlyph, UNITS_PER_EM } from './glyphs'
+import { colorKey, type Glyph, type Rect, toGlyph, UNITS_PER_EM } from './glyphs'
 import { prefixSums } from './write'
 
 export type PlannedGlyph = { advance: number; rects: Rect[] }
 export type Ligature = { components: number[]; glyph: number }
 export type ColorBase = { glyph: number; layers: { glyph: number; palette: number }[] }
 
+type Entry = { stem: string; codePoints: number[]; glyph: Glyph }
+type Sequence = { codePoints: number[]; glyph: number }
+
 const MAX_GLYPHS = 0xffff
 const NOTDEF_ADVANCE = UNITS_PER_EM / 2
+
+// glyph 0 is .notdef, so the index-th base glyph lands at index + 1
+const baseGid = (index: number) => index + 1
 
 // ascii codepoints (keycap digits, '#', '*') must keep their text glyphs from other fonts
 const hasAsciiCodePoint = (codePoints: number[]) => codePoints.some((cp) => cp < 0x80)
 
-type Sequence = { codePoints: number[]; glyph: number }
-
 const sequenceKey = (codePoints: number[]) => codePoints.join(',')
 
-export const planFont = (grids: Map<string, DotGrid>) => {
-  const entries = [...grids]
+const planEntries = (grids: Map<string, DotGrid>) => {
+  return [...grids]
     .map(([stem, grid]) => ({ stem, grid, codePoints: toCodePoints(stem) }))
     .filter(({ codePoints }) => !hasAsciiCodePoint(codePoints))
     .map(({ stem, grid, codePoints }) => ({ stem, codePoints, glyph: toGlyph(grid) }))
     .toSorted((a, b) => (a.stem < b.stem ? -1 : 1))
+}
 
-  if (entries.length === 0) throw new Error('cannot plan a font with no glyphs')
-
-  const baseGid = (index: number) => index + 1
-
+// cmap maps codepoints to glyph ids; sequences hold the multi-codepoint ligatures;
+// componentCps are codepoints that only appear inside sequences and need empty glyphs
+const planMapping = (entries: Entry[]) => {
   const cmap = new Map<number, number>()
 
   for (const [index, { codePoints }] of entries.entries()) {
@@ -60,7 +64,6 @@ export const planFont = (grids: Map<string, DotGrid>) => {
     )
   }
 
-  // codepoints appearing only inside sequences get zero-advance empty glyphs
   const componentCps = [...new Set(sequences.values().flatMap(({ codePoints }) => codePoints))]
     .filter((cp) => !cmap.has(cp))
     .toSorted((a, b) => a - b)
@@ -70,7 +73,11 @@ export const planFont = (grids: Map<string, DotGrid>) => {
     cmap.set(cp, emptyBase + index)
   }
 
-  const layerBase = emptyBase + componentCps.length
+  return { cmap, sequences, componentCps }
+}
+
+const planColors = (entries: Entry[], componentCount: number) => {
+  const layerBase = baseGid(entries.length) + componentCount
   const layerStarts = prefixSums(
     entries.map(({ glyph }) => glyph.layers.length),
     layerBase,
@@ -103,25 +110,40 @@ export const planFont = (grids: Map<string, DotGrid>) => {
     }))
     .filter(({ layers }) => layers.length > 0)
 
+  return { palette, colorBases }
+}
+
+const planLigatures = (sequences: Map<string, Sequence>, cmap: Map<number, number>) => {
   const gidOf = (cp: number) => {
     const gid = cmap.get(cp)
     if (gid === undefined) throw new Error(`font: missing cmap entry for codepoint ${cp}`)
     return gid
   }
 
-  const ligatures = sequences
+  return sequences
     .values()
     .map(({ codePoints, glyph }) => ({ components: codePoints.map(gidOf), glyph }))
     .toArray()
+}
 
-  const glyphs = [
-    { advance: NOTDEF_ADVANCE, rects: [] },
-    ...entries.map(({ glyph }) => ({ advance: glyph.advance, rects: glyph.silhouette })),
-    ...componentCps.map(() => ({ advance: 0, rects: [] })),
-    ...entries.flatMap(({ glyph }) =>
-      glyph.layers.map(({ rects }) => ({ advance: glyph.advance, rects })),
-    ),
-  ]
+// [.notdef, base glyphs, zero-advance component glyphs, color layer glyphs]
+const planGlyphs = (entries: Entry[], componentCps: number[]) => [
+  { advance: NOTDEF_ADVANCE, rects: [] },
+  ...entries.map(({ glyph }) => ({ advance: glyph.advance, rects: glyph.silhouette })),
+  ...componentCps.map(() => ({ advance: 0, rects: [] })),
+  ...entries.flatMap(({ glyph }) =>
+    glyph.layers.map(({ rects }) => ({ advance: glyph.advance, rects })),
+  ),
+]
+
+export const planFont = (grids: Map<string, DotGrid>) => {
+  const entries = planEntries(grids)
+  if (entries.length === 0) throw new Error('cannot plan a font with no glyphs')
+
+  const { cmap, sequences, componentCps } = planMapping(entries)
+  const { palette, colorBases } = planColors(entries, componentCps.length)
+  const ligatures = planLigatures(sequences, cmap)
+  const glyphs = planGlyphs(entries, componentCps)
 
   if (glyphs.length > MAX_GLYPHS) {
     throw new Error(`font: ${glyphs.length} glyphs exceed the truetype limit`)
