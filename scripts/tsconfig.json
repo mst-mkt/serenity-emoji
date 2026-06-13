@@ -7,7 +7,8 @@
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true,
-    "types": ["./cloudflare-env.d.ts"]
+    "allowImportingTsExtensions": true,
+    "types": ["node"]
   },
-  "exclude": ["node_modules", "scripts"]
+  "include": ["**/*"]
 }

@@ -21,7 +21,7 @@ export default defineConfig({
     '*': 'vp check --fix',
   },
   test: {
-    include: ['./src/**/*.test.{ts,tsx}'],
+    include: ['./src/**/*.test.{ts,tsx}', './scripts/**/*.test.{ts,tsx}'],
   },
   fmt: {
     semi: false,
