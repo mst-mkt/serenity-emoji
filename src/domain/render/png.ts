@@ -2,8 +2,8 @@ import { concat, crc32, u32 } from '../../lib/bytes'
 import { deflate } from '../../lib/zlib'
 import { pngTextRecords } from '../attribution'
 import type { DotGrid, Rgba } from '../dot-grid'
-import { SIGNATURE } from './decode/chunks'
-import { dimensionsOf, scaleToFit, type SizeOptions } from './scale'
+import { SIGNATURE } from '../image/decode/chunks'
+import { dimensionsOf, scaleToFit, type SizeOptions } from '../image/scale'
 
 const chunk = (type: string, data: Uint8Array) => {
   const body = concat([new TextEncoder().encode(type), data])

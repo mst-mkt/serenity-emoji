@@ -4,10 +4,10 @@ import * as v from 'valibot'
 
 import type { AppEnv } from '../bindings'
 import { toStem } from '../domain/emoji'
-import { toAnsi } from '../domain/image/ansi'
-import { toPng } from '../domain/image/png'
 import { scaleToFit } from '../domain/image/scale'
-import { toSvg } from '../domain/image/svg'
+import { toAnsi } from '../domain/render/ansi'
+import { toPng } from '../domain/render/png'
+import { toSvg } from '../domain/render/svg'
 import { findGrid } from '../storage/grids'
 import { licenseHeaderMiddleware } from './middlewares/license'
 

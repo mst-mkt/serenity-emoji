@@ -1,7 +1,7 @@
 import { hex } from '../../lib/bytes'
 import { svgMetadata } from '../attribution'
 import { type DotGrid, type Rgba, type Run, toRuns } from '../dot-grid'
-import { dimensionsOf, fitTo, type SizeOptions } from './scale'
+import { dimensionsOf, fitTo, type SizeOptions } from '../image/scale'
 
 const fill = (rgba: Rgba) => `#${hex(rgba.r)}${hex(rgba.g)}${hex(rgba.b)}`
 

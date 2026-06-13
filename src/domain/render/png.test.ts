@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vite-plus/test'
 
 import { rgba } from '../../test/fixtures'
-import { decodePng } from './decode/decode'
+import { decodePng } from '../image/decode/decode'
 import { toPng } from './png'
 
 const CLEAR = rgba(0, 0, 0, 0)
