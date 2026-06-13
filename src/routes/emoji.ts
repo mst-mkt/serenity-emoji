@@ -8,6 +8,7 @@ import { toStem } from '../domain/emoji'
 import { scaleToFit } from '../domain/image/scale'
 import { toSquare } from '../domain/image/square'
 import { toAnsi } from '../domain/render/ansi'
+import { toIco } from '../domain/render/ico'
 import { toPng } from '../domain/render/png'
 import { toSixel } from '../domain/render/sixel'
 import { toSvg } from '../domain/render/svg'
@@ -146,5 +147,22 @@ export const emojiRoutes = new Hono<AppEnv>()
       const sixel = toSixel(scaleToFit(grid, size ?? DEFAULT_SIZE))
 
       return c.body(sixel, 200, { 'content-type': 'image/sixel', 'cache-control': CACHE_CONTROL })
+    },
+  )
+  .get(
+    '/:emoji/ico',
+    sValidator('param', ParamSchema),
+    sValidator('query', QuerySchema),
+    async (c) => {
+      const { emoji: stem } = c.req.valid('param')
+      const { size, square } = c.req.valid('query')
+      const grid = await loadGrid(stem, square)
+      if (grid === null) return c.text('emoji not found', 404)
+
+      // ICO directory dimensions are one byte, so an entry caps at 256
+      const png = await toPng(grid, { size: Math.min(size ?? 256, 256) })
+      const ico = toIco(png)
+
+      return c.body(ico, 200, { 'content-type': 'image/x-icon', 'cache-control': CACHE_CONTROL })
     },
   )
