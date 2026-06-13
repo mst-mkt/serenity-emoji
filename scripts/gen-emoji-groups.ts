@@ -1,4 +1,4 @@
-// Generates src/core/font/emoji-groups.gen.ts
+// Generates src/domain/webfont/groups.gen.ts
 // - the codepoint -> Unicode emoji group table
 // - used to split fonts into per-group subsets
 //
@@ -13,7 +13,7 @@ import { parseEmojiGroups, parseEmojiVersion } from './internal/emoji-test.ts'
 import { renderEmojiGroups } from './internal/render.ts'
 
 const SOURCE = 'https://unicode.org/Public/emoji/latest/emoji-test.txt'
-const OUTPUT = join(import.meta.dirname, '../src/core/font/emoji-groups.gen.ts')
+const OUTPUT = join(import.meta.dirname, '../src/domain/webfont/groups.gen.ts')
 
 const response = await fetch(SOURCE)
 if (!response.ok) throw new Error(`fetch ${SOURCE} failed: ${response.status}`)

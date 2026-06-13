@@ -1,7 +1,7 @@
 import { env } from 'cloudflare:workers'
 
-import type { DotGrid } from '../core/dot-grid'
-import { withoutVariationSelectors } from '../core/emoji'
+import type { DotGrid } from '../domain/dot-grid'
+import { withoutVariationSelectors } from '../domain/emoji'
 
 type Metadata = { sha: string }
 export type StoredEntry = { name: string; sha: string }
