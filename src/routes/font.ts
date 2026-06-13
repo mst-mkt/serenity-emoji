@@ -1,10 +1,11 @@
+import { sValidator } from '@hono/standard-validator'
 import { Hono } from 'hono'
 import * as v from 'valibot'
 
 import type { AppEnv } from '../bindings'
 import { toFontFaceCss } from '../core/font/css'
 import { ManifestSchema } from '../core/font/subsets'
-import { parseFontFile } from '../storage/font-file'
+import { type FontFile, parseFontFile } from '../storage/font-file'
 import {
   FONT_CONTENT_TYPES,
   getFont,
@@ -12,6 +13,17 @@ import {
   IMMUTABLE_CACHE,
   LATEST_CACHE,
 } from '../storage/fonts'
+import { buildRangeFont, buildTextFont } from '../sync/font'
+
+const fontFileQuerySchema = v.object({
+  text: v.optional(v.string()),
+})
+
+const fontHeaders = (parsed: FontFile, cacheControl: string, etag?: string) => ({
+  'content-type': FONT_CONTENT_TYPES[parsed.format],
+  'cache-control': cacheControl,
+  ...(etag === undefined ? {} : { etag }),
+})
 
 export const fontRoutes = new Hono<AppEnv>()
   .get('/serenity-emoji.css', async (c) => {
@@ -26,19 +38,27 @@ export const fontRoutes = new Hono<AppEnv>()
       'cache-control': LATEST_CACHE,
     })
   })
-  .get('/font/:file', async (c) => {
+  .get('/font/:file', sValidator('query', fontFileQuerySchema), async (c) => {
     const file = c.req.param('file')
     const parsed = parseFontFile(file)
     if (parsed === null) return c.text('font not found', 404)
 
+    const { text } = c.req.valid('query')
+    if (parsed.subset === 'text' && text !== undefined) {
+      const built = await buildTextFont(text, parsed.format)
+      if (built === null) return c.text('font not found', 404)
+      return c.body(built.body, 200, fontHeaders(parsed, LATEST_CACHE, built.etag))
+    }
+
     const object = await getFont(file)
-    if (object === null) return c.text('font not found', 404)
+    if (object !== null) {
+      const cacheControl = parsed.digest === null ? LATEST_CACHE : IMMUTABLE_CACHE
+      return c.body(object.body, 200, fontHeaders(parsed, cacheControl, object.httpEtag))
+    }
 
-    const cacheControl = parsed.digest === null ? LATEST_CACHE : IMMUTABLE_CACHE
+    // cache miss: build a contiguous range on demand, then serve the fresh bytes
+    const built = await buildRangeFont(parsed)
+    if (built === null) return c.text('font not found', 404)
 
-    return c.body(object.body, 200, {
-      'content-type': FONT_CONTENT_TYPES[parsed.format],
-      'cache-control': cacheControl,
-      etag: object.httpEtag,
-    })
+    return c.body(built, 200, fontHeaders(parsed, LATEST_CACHE))
   })

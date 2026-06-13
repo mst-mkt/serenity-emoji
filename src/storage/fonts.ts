@@ -20,6 +20,10 @@ export const LATEST_CACHE = 'public, max-age=86400'
 
 export const getFont = (file: string) => env.R2.get(fileKeyOf(file))
 
+export const getFontLatest = (subset: string, format: FontFormat) => {
+  return env.R2.get(latestKeyOf(subset, format))
+}
+
 export const putFont = async (font: Uint8Array, subset: string, format: FontFormat) => {
   const hex = await sha256Hex(font)
   const digest = hex.slice(0, 16)

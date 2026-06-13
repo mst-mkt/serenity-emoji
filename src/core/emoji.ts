@@ -35,3 +35,11 @@ export const withoutVariationSelectors = (stem: string) => {
 
   return withoutVariationSelectors
 }
+
+export const textCodePoints = (text: string) => {
+  const points = Array.from(text, (char) => char.codePointAt(0) ?? 0).filter(
+    (codePoint) => codePoint !== VARIATION_SELECTOR,
+  )
+
+  return new Set(points)
+}

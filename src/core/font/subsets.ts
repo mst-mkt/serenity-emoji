@@ -3,6 +3,7 @@ import * as v from 'valibot'
 import type { DotGrid } from '../dot-grid'
 import { toCodePoints, VARIATION_SELECTOR } from '../emoji'
 import { EMOJI_GROUPS } from './emoji-groups.gen'
+import type { CodePointRange } from './range'
 
 export const FULL_SUBSET = 'full'
 
@@ -21,6 +22,29 @@ const groupByCodePoint = new Map<number, string>(
 
 const baseCodePoints = (stem: string) => {
   return toCodePoints(stem).filter((codePoint) => codePoint !== VARIATION_SELECTOR)
+}
+
+// only single-codepoint emoji are selectable; sequences stay in full to keep ligatures intact
+const baseOf = (stem: string) => {
+  const base = baseCodePoints(stem)
+  return base.length === 1 ? base[0] : null
+}
+
+const selectBy = (grids: Map<string, DotGrid>, matches: (codePoint: number) => boolean) => {
+  const members = [...grids].filter(([stem]) => {
+    const base = baseOf(stem)
+    return base !== null && matches(base)
+  })
+
+  return new Map(members)
+}
+
+export const selectByRange = (grids: Map<string, DotGrid>, { min, max }: CodePointRange) => {
+  return selectBy(grids, (codePoint) => codePoint >= min && codePoint <= max)
+}
+
+export const selectByCodePoints = (grids: Map<string, DotGrid>, codePoints: Set<number>) => {
+  return selectBy(grids, (codePoint) => codePoints.has(codePoint))
 }
 
 // sequences stay in full; splitting them across files would break the ligature

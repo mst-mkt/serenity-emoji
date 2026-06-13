@@ -2,7 +2,13 @@ import { describe, expect, it } from 'vite-plus/test'
 
 import type { DotGrid } from '../dot-grid'
 import { rgba } from '../fixtures'
-import { manifestOf, splitBySubset, toUnicodeRange } from './subsets'
+import {
+  manifestOf,
+  selectByCodePoints,
+  selectByRange,
+  splitBySubset,
+  toUnicodeRange,
+} from './subsets'
 
 const cell: DotGrid = [[rgba(255, 0, 0)]]
 
@@ -28,6 +34,35 @@ describe('splitBySubset', () => {
     const buckets = splitBySubset(grids)
 
     expect(buckets.size).toBe(0)
+  })
+})
+
+describe('selectByRange', () => {
+  it('keeps single-codepoint emoji within the span and drops sequences', () => {
+    const grids = new Map<string, DotGrid>([
+      ['U+1F600', cell], // 😀 in span
+      ['U+1F436', cell], // 🐶 out of span
+      ['U+2764_U+FE0F', cell], // ❤️ base 2764 out of span
+      ['U+1F600_U+200D_U+1F525', cell], // sequence -> excluded
+    ])
+
+    const selected = selectByRange(grids, { min: 0x1f5ff, max: 0x1f64f })
+
+    expect([...selected.keys()]).toEqual(['U+1F600'])
+  })
+})
+
+describe('selectByCodePoints', () => {
+  it('keeps single-codepoint emoji whose base is in the set', () => {
+    const grids = new Map<string, DotGrid>([
+      ['U+1F600', cell],
+      ['U+2764_U+FE0F', cell], // base 2764 after dropping the selector
+      ['U+1F436', cell],
+    ])
+
+    const selected = selectByCodePoints(grids, new Set([0x1f600, 0x2764]))
+
+    expect([...selected.keys()].toSorted()).toEqual(['U+1F600', 'U+2764_U+FE0F'])
   })
 })
 
