@@ -31,7 +31,7 @@ export const fontRoutes = new Hono<AppEnv>()
     if (raw === null) return c.text('font manifest not found', 404)
 
     const manifest = v.parse(ManifestSchema, JSON.parse(raw))
-    const css = toFontFaceCss(manifest)
+    const css = toFontFaceCss(manifest, new URL(c.req.url).origin)
 
     return c.body(css, 200, {
       'content-type': 'text/css; charset=utf-8',

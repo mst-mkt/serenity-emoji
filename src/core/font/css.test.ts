@@ -3,8 +3,10 @@ import { describe, expect, it } from 'vite-plus/test'
 import { toFontFaceCss } from './css'
 
 describe('toFontFaceCss', () => {
+  const BASE_URL = 'https://serenity.keito.dev'
+
   it('emits a font-face per subset with a woff source and unicode-range', () => {
-    const css = toFontFaceCss([{ subset: 'emoticons', range: 'U+1F600-1F64F' }])
+    const css = toFontFaceCss([{ subset: 'emoticons', range: 'U+1F600-1F64F' }], BASE_URL)
 
     expect(css).toContain("font-family: 'Serenity Emoji';")
     expect(css).toContain(
@@ -14,16 +16,19 @@ describe('toFontFaceCss', () => {
   })
 
   it('omits unicode-range for the full fallback', () => {
-    const css = toFontFaceCss([{ subset: 'full', range: null }])
+    const css = toFontFaceCss([{ subset: 'full', range: null }], BASE_URL)
 
     expect(css).not.toContain('unicode-range')
   })
 
   it('separates multiple faces with a blank line', () => {
-    const css = toFontFaceCss([
-      { subset: 'full', range: null },
-      { subset: 'emoticons', range: 'U+1F600' },
-    ])
+    const css = toFontFaceCss(
+      [
+        { subset: 'full', range: null },
+        { subset: 'emoticons', range: 'U+1F600' },
+      ],
+      BASE_URL,
+    )
 
     expect(css.split('\n\n')).toHaveLength(2)
   })

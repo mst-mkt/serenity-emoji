@@ -17,10 +17,10 @@ const cssRule = (selector: string, declarations: string[]) => {
   return `${selector} {\n${body}\n}`
 }
 
-const fontFace = ({ subset, range }: SubsetEntry) => {
+const fontFace = ({ subset, range }: SubsetEntry, baseUrl: string) => {
   const src = sources([
     {
-      url: `https://serenity.keito.dev/font/serenity-emoji.${subset}.woff`,
+      url: `${baseUrl}/font/serenity-emoji.${subset}.woff`,
       format: 'woff',
     },
   ])
@@ -35,6 +35,6 @@ const fontFace = ({ subset, range }: SubsetEntry) => {
   return rule
 }
 
-export const toFontFaceCss = (manifest: SubsetEntry[]) => {
-  return manifest.map(fontFace).join('\n\n')
+export const toFontFaceCss = (manifest: SubsetEntry[], baseUrl: string) => {
+  return manifest.map((entry) => fontFace(entry, baseUrl)).join('\n\n')
 }
