@@ -8,6 +8,7 @@ const RED = rgba(255, 0, 0)
 const BLUE = rgba(0, 0, 255)
 
 const dot = (color = RED): DotGrid => [[color]]
+const bicolor: DotGrid = [[RED, BLUE]]
 
 describe('planFont', () => {
   it('maps single codepoint stems through cmap to their base glyph', () => {
@@ -88,6 +89,51 @@ describe('planFont', () => {
       { glyph: 1, layers: [{ glyph: 3, palette: 0 }] },
       { glyph: 2, layers: [{ glyph: 4, palette: 0 }] },
     ])
+  })
+
+  it('offsets color layer glyphs per base glyph in palette order', () => {
+    const grids = new Map([
+      ['U+1F600', bicolor],
+      ['U+1F601', dot()],
+    ])
+
+    const plan = planFont(grids)
+
+    expect(plan.palette).toEqual([BLUE, RED])
+    expect(plan.colorBases).toEqual([
+      {
+        glyph: 1,
+        layers: [
+          { glyph: 3, palette: 0 },
+          { glyph: 4, palette: 1 },
+        ],
+      },
+      { glyph: 2, layers: [{ glyph: 5, palette: 1 }] },
+    ])
+  })
+
+  it('keeps the standalone glyph when a vs16 variant strips to its codepoint', () => {
+    const grids = new Map([
+      ['U+263A', dot()],
+      ['U+263A_U+FE0F', dot(BLUE)],
+    ])
+
+    const plan = planFont(grids)
+
+    expect(plan.cmap.get(0x263a)).toBe(1)
+    expect(plan.ligatures).toEqual([{ components: [1, 3], glyph: 2 }])
+  })
+
+  it('keeps the first sequence when a stripped variant collides with it', () => {
+    const grids = new Map([
+      ['U+1F468_U+200D_U+1F469', dot()],
+      ['U+1F468_U+FE0F_U+200D_U+1F469', dot(BLUE)],
+    ])
+
+    const plan = planFont(grids)
+
+    const threeComponent = plan.ligatures.filter(({ components }) => components.length === 3)
+    expect(threeComponent).toEqual([{ components: [5, 3, 6], glyph: 1 }])
   })
 
   it('throws when no glyphs remain', () => {

@@ -2,6 +2,7 @@ import { env } from 'cloudflare:workers'
 
 import type { DotGrid } from '../domain/dot-grid'
 import { withoutVariationSelectors } from '../domain/emoji'
+import { chunk } from '../lib/chunk'
 
 type Metadata = { sha: string }
 export type StoredEntry = { name: string; sha: string }
@@ -11,12 +12,6 @@ const keyOf = (stem: string) => `${KEY_PREFIX}${stem}`
 
 // kv bulk get caps at 100 keys per call
 const BULK_LIMIT = 100
-
-const chunk = <T>(items: T[], size: number) => {
-  return [...Array(Math.ceil(items.length / size))].map((_, i) =>
-    items.slice(i * size, (i + 1) * size),
-  )
-}
 
 export const getGrid = (stem: string) => {
   return env.KV.get<DotGrid>(keyOf(stem), 'json')
