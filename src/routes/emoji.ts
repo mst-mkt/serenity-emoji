@@ -3,6 +3,7 @@ import { Hono } from 'hono'
 import * as v from 'valibot'
 
 import type { AppEnv } from '../bindings'
+import { COLOR_FORMATS, formatColor } from '../domain/color/format'
 import { toStem } from '../domain/emoji'
 import { scaleToFit } from '../domain/image/scale'
 import { toSquare } from '../domain/image/square'
@@ -29,6 +30,11 @@ const QuerySchema = v.object({
       v.transform((value: string) => value === '' || value === 'true' || value === '1'),
     ),
   ),
+})
+
+const JsonQuerySchema = v.object({
+  ...QuerySchema.entries,
+  format: v.optional(v.picklist(COLOR_FORMATS), 'object'),
 })
 
 const loadGrid = async (stem: string, square: boolean | undefined) => {
@@ -63,16 +69,17 @@ export const emojiRoutes = new Hono<AppEnv>()
   .get(
     '/:emoji/json',
     sValidator('param', ParamSchema),
-    sValidator('query', QuerySchema),
+    sValidator('query', JsonQuerySchema),
     async (c) => {
       const { emoji: stem } = c.req.valid('param')
-      const { size, square } = c.req.valid('query')
+      const { size, square, format } = c.req.valid('query')
       const grid = await loadGrid(stem, square)
       if (grid === null) return c.text('emoji not found', 404)
 
       const scaled = scaleToFit(grid, size)
+      const colored = scaled.map((row) => row.map((color) => formatColor(color, format)))
 
-      return c.json(scaled, 200, { 'cache-control': CACHE_CONTROL })
+      return c.json(colored, 200, { 'cache-control': CACHE_CONTROL })
     },
   )
   .get(

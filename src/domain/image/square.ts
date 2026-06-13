@@ -3,7 +3,6 @@ import { dimensionsOf } from './scale'
 
 const TRANSPARENT: Rgba = { r: 0, g: 0, b: 0, a: 0 }
 
-// pad the grid to a centered square, filling the margins with transparent pixels
 export const toSquare = (pixels: DotGrid) => {
   const { width, height } = dimensionsOf(pixels)
   if (width === 0 || height === 0) return pixels
