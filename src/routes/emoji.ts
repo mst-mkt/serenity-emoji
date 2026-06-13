@@ -9,12 +9,13 @@ import { scaleToFit } from '../domain/image/scale'
 import { toSquare } from '../domain/image/square'
 import { toAnsi } from '../domain/render/ansi'
 import { toPng } from '../domain/render/png'
+import { toSixel } from '../domain/render/sixel'
 import { toSvg } from '../domain/render/svg'
 import { findGrid } from '../storage/grids'
 import { licenseHeaderMiddleware } from './middlewares/license'
 
 const CACHE_CONTROL = 'public, max-age=3600'
-const DEFAULT_PNG_SIZE = 512
+const DEFAULT_SIZE = 512
 
 const ParamSchema = v.object({
   emoji: v.pipe(v.string(), v.transform(toStem)),
@@ -66,7 +67,7 @@ export const emojiRoutes = new Hono<AppEnv>()
       }
       if (isCurl) return c.text(toAnsi(scaleToFit(grid, size)), 200, headers)
 
-      const png = await toPng(grid, { size: size ?? DEFAULT_PNG_SIZE })
+      const png = await toPng(grid, { size: size ?? DEFAULT_SIZE })
       return c.body(png, 200, { ...headers, 'content-type': 'image/png' })
     },
   )
@@ -111,7 +112,7 @@ export const emojiRoutes = new Hono<AppEnv>()
       const grid = await loadGrid(stem, square)
       if (grid === null) return c.text('emoji not found', 404)
 
-      const pngSize = size ?? DEFAULT_PNG_SIZE
+      const pngSize = size ?? DEFAULT_SIZE
       const png = await toPng(grid, { size: pngSize })
 
       return c.body(png, 200, { 'content-type': 'image/png', 'cache-control': CACHE_CONTROL })
@@ -130,5 +131,20 @@ export const emojiRoutes = new Hono<AppEnv>()
       const svg = toSvg(grid, { size })
 
       return c.body(svg, 200, { 'content-type': 'image/svg+xml', 'cache-control': CACHE_CONTROL })
+    },
+  )
+  .get(
+    '/:emoji/sixel',
+    sValidator('param', ParamSchema),
+    sValidator('query', QuerySchema),
+    async (c) => {
+      const { emoji: stem } = c.req.valid('param')
+      const { size, square } = c.req.valid('query')
+      const grid = await loadGrid(stem, square)
+      if (grid === null) return c.text('emoji not found', 404)
+
+      const sixel = toSixel(scaleToFit(grid, size ?? DEFAULT_SIZE))
+
+      return c.body(sixel, 200, { 'content-type': 'image/sixel', 'cache-control': CACHE_CONTROL })
     },
   )
