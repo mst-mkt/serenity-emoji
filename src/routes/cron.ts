@@ -3,6 +3,7 @@ import type { CronHandler } from 'kuron'
 import type { AppEnv } from '../bindings'
 import { getFontBuilt, getFontTarget, putFontTarget } from '../storage/fonts'
 import { listGrids } from '../storage/grids'
+import { getSyncedCommit, putSyncedCommit } from '../storage/sync'
 import { applyTree } from '../sync/apply'
 import { buildFontSubsets } from '../sync/font'
 import { fetchEmojiTree, fetchHead } from '../sync/github'
@@ -10,6 +11,9 @@ import { digestOfEntries, nextStored } from '../sync/plan'
 
 export const handleSync: CronHandler<AppEnv> = async () => {
   const commit = await fetchHead()
+  const syncedCommit = await getSyncedCommit()
+  if (commit === syncedCommit) return
+
   const [tree, stored] = await Promise.all([fetchEmojiTree(commit), listGrids()])
 
   const { applied, deleted } = await applyTree(commit, tree, stored)
@@ -21,6 +25,9 @@ export const handleSync: CronHandler<AppEnv> = async () => {
 
   const target = await getFontTarget()
   if (target !== treeDigest) await putFontTarget(treeDigest)
+
+  // record only once fully mirrored, and after the build target, so a crash just retries
+  await putSyncedCommit(commit)
 }
 
 export const handleFontBuild: CronHandler<AppEnv> = async () => {
