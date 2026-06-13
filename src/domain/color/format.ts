@@ -2,9 +2,8 @@ import { hex } from '../../lib/bytes'
 import type { Rgba } from '../dot-grid'
 import { toHsl, toHwb, toLab, toLch, toOklab, toOklch } from './convert'
 
-export const COLOR_FORMATS = [
-  'object',
-  'array',
+export const COLOR_DATA_FORMATS = ['object', 'array'] as const
+export const COLOR_STRING_FORMATS = [
   'hex',
   'rgb',
   'rgba',
@@ -15,6 +14,7 @@ export const COLOR_FORMATS = [
   'oklab',
   'oklch',
 ] as const
+export const COLOR_FORMATS = [...COLOR_DATA_FORMATS, ...COLOR_STRING_FORMATS] as const
 
 export type ColorFormat = (typeof COLOR_FORMATS)[number]
 

@@ -3,11 +3,12 @@ import { Hono } from 'hono'
 import * as v from 'valibot'
 
 import type { AppEnv } from '../bindings'
-import { COLOR_FORMATS, formatColor } from '../domain/color/format'
+import { COLOR_FORMATS, COLOR_STRING_FORMATS, formatColor } from '../domain/color/format'
 import { toStem } from '../domain/emoji'
 import { scaleToFit } from '../domain/image/scale'
 import { toSquare } from '../domain/image/square'
 import { toAnsi } from '../domain/render/ansi'
+import { toCsv } from '../domain/render/csv'
 import { toIco } from '../domain/render/ico'
 import { toIterm } from '../domain/render/iterm'
 import { toKitty } from '../domain/render/kitty'
@@ -39,6 +40,12 @@ const QuerySchema = v.object({
 const JsonQuerySchema = v.object({
   ...QuerySchema.entries,
   format: v.optional(v.picklist(COLOR_FORMATS), 'object'),
+})
+
+const CsvQuerySchema = v.object({
+  ...QuerySchema.entries,
+  format: v.optional(v.picklist(COLOR_STRING_FORMATS), 'hex'),
+  separator: v.optional(v.pipe(v.string(), v.minLength(1)), ','),
 })
 
 const loadGrid = async (stem: string, square: boolean | undefined) => {
@@ -202,6 +209,24 @@ export const emojiRoutes = new Hono<AppEnv>()
 
       return c.body(kitty, 200, {
         'content-type': 'text/plain; charset=utf-8',
+        'cache-control': CACHE_CONTROL,
+      })
+    },
+  )
+  .get(
+    '/:emoji/csv',
+    sValidator('param', ParamSchema),
+    sValidator('query', CsvQuerySchema),
+    async (c) => {
+      const { emoji: stem } = c.req.valid('param')
+      const { size, square, format, separator } = c.req.valid('query')
+      const grid = await loadGrid(stem, square)
+      if (grid === null) return c.text('emoji not found', 404)
+
+      const csv = toCsv(scaleToFit(grid, size), format, separator)
+
+      return c.body(csv, 200, {
+        'content-type': 'text/csv; charset=utf-8',
         'cache-control': CACHE_CONTROL,
       })
     },
