@@ -44,28 +44,32 @@ const loadGrid = async (stem: string, square: boolean | undefined) => {
 
 export const emojiRoutes = new Hono<AppEnv>()
   .use(licenseHeaderMiddleware)
-  .get('/:emoji', sValidator('param', ParamSchema), sValidator('query', QuerySchema), async (c) => {
-    const { emoji: stem } = c.req.valid('param')
-    const { size, square } = c.req.valid('query')
-    const grid = await loadGrid(stem, square)
-    if (grid === null) return c.text('emoji not found', 404)
+  .get(
+    '/:emoji',
+    sValidator('param', ParamSchema),
+    sValidator('query', JsonQuerySchema),
+    async (c) => {
+      const { emoji: stem } = c.req.valid('param')
+      const { size, square, format } = c.req.valid('query')
+      const grid = await loadGrid(stem, square)
+      if (grid === null) return c.text('emoji not found', 404)
 
-    const userAgent = c.req.header('user-agent')
-    const isCurl = userAgent?.startsWith('curl/') ?? false
+      const wantsJson = c.req.header('accept')?.includes('application/json') ?? false
+      const isCurl = c.req.header('user-agent')?.startsWith('curl/') ?? false
+      const headers = { 'cache-control': CACHE_CONTROL, vary: 'user-agent, accept' }
 
-    if (isCurl) {
-      const ansi = toAnsi(scaleToFit(grid, size))
-      return c.text(ansi, 200, { 'cache-control': CACHE_CONTROL, vary: 'user-agent' })
-    }
+      if (wantsJson) {
+        const colored = scaleToFit(grid, size).map((row) =>
+          row.map((color) => formatColor(color, format)),
+        )
+        return c.json(colored, 200, headers)
+      }
+      if (isCurl) return c.text(toAnsi(scaleToFit(grid, size)), 200, headers)
 
-    const pngSize = size ?? DEFAULT_PNG_SIZE
-    const png = await toPng(grid, { size: pngSize })
-    return c.body(png, 200, {
-      'content-type': 'image/png',
-      'cache-control': CACHE_CONTROL,
-      vary: 'user-agent',
-    })
-  })
+      const png = await toPng(grid, { size: size ?? DEFAULT_PNG_SIZE })
+      return c.body(png, 200, { ...headers, 'content-type': 'image/png' })
+    },
+  )
   .get(
     '/:emoji/json',
     sValidator('param', ParamSchema),
