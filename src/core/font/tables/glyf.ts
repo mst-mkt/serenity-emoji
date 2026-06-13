@@ -1,6 +1,6 @@
 import { concat } from '../../decode/bytes'
 import type { Rect } from '../glyphs'
-import { i16, pad4, prefixSums, u16, u32 } from '../write'
+import { i16, pad4, prefixSums, struct, u16, u32 } from '../write'
 
 const ON_CURVE = 0x01
 const X_SHORT = 0x02
@@ -68,17 +68,17 @@ const encodeGlyph = (rects: Rect[], box: Rect) => {
     ({ dx, dy }) => ON_CURVE | coordFlags(dx, X_SHORT, X_SAME) | coordFlags(dy, Y_SHORT, Y_SAME),
   )
 
-  return concat([
-    i16(rects.length),
-    i16(box.xMin),
-    i16(box.yMin),
-    i16(box.xMax),
-    i16(box.yMax),
-    concat(rects.map((_, index) => u16(index * 4 + 3))),
-    u16(0),
-    Uint8Array.from(flags),
-    Uint8Array.from(deltas.flatMap(({ dx }) => coordBytes(dx))),
-    Uint8Array.from(deltas.flatMap(({ dy }) => coordBytes(dy))),
+  return struct([
+    ['numberOfContours', i16(rects.length)],
+    ['xMin', i16(box.xMin)],
+    ['yMin', i16(box.yMin)],
+    ['xMax', i16(box.xMax)],
+    ['yMax', i16(box.yMax)],
+    ['endPtsOfContours', concat(rects.map((_, index) => u16(index * 4 + 3)))],
+    ['instructionLength', u16(0)],
+    ['flags', Uint8Array.from(flags)],
+    ['xCoordinates', Uint8Array.from(deltas.flatMap(({ dx }) => coordBytes(dx)))],
+    ['yCoordinates', Uint8Array.from(deltas.flatMap(({ dy }) => coordBytes(dy)))],
   ])
 }
 

@@ -1,5 +1,5 @@
 import { concat } from '../decode/bytes'
-import { checksum, pad4, prefixSums, tag, u16, u32 } from './write'
+import { checksum, pad4, prefixSums, struct, tag, u16, u32 } from './write'
 
 export type Table = { tag: string; data: Uint8Array }
 export type Sfnt = ReturnType<typeof assembleSfnt>
@@ -21,16 +21,21 @@ export const assembleSfnt = (tables: Table[]) => {
 
   const entrySelector = Math.floor(Math.log2(sorted.length))
   const searchRange = 2 ** entrySelector * 16
-  const header = concat([
-    u32(0x00010000),
-    u16(sorted.length),
-    u16(searchRange),
-    u16(entrySelector),
-    u16(sorted.length * 16 - searchRange),
+  const header = struct([
+    ['sfntVersion', u32(0x00010000)],
+    ['numTables', u16(sorted.length)],
+    ['searchRange', u16(searchRange)],
+    ['entrySelector', u16(entrySelector)],
+    ['rangeShift', u16(sorted.length * 16 - searchRange)],
   ])
   const records = concat(
     sorted.map(({ tag: name, data }, index) =>
-      concat([tag(name), u32(checksums[index]), u32(offsets[index]), u32(data.length)]),
+      struct([
+        ['tag', tag(name)],
+        ['checksum', u32(checksums[index])],
+        ['offset', u32(offsets[index])],
+        ['length', u32(data.length)],
+      ]),
     ),
   )
 

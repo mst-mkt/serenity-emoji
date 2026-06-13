@@ -61,3 +61,26 @@ export const prefixSums = (lengths: number[], start = 0) => {
     [start],
   )
 }
+
+export const struct = (fields: [string, Uint8Array][]) => {
+  return concat(fields.map(([, bytes]) => bytes))
+}
+
+// header is built twice: once at zero to size it, then with the resolved section offsets
+export const withSections = (
+  header: (offsetOf: (section: string) => number) => Uint8Array,
+  sections: [string, Uint8Array][],
+) => {
+  const headerSize = header(() => 0).length
+  const offsets = prefixSums(
+    sections.map(([, bytes]) => bytes.length),
+    headerSize,
+  )
+  const offsetOf = (section: string) => {
+    const index = sections.findIndex(([name]) => name === section)
+    if (index < 0) throw new Error(`unknown section: ${section}`)
+    return offsets[index]
+  }
+
+  return concat([header(offsetOf), ...sections.map(([, bytes]) => bytes)])
+}

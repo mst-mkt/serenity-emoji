@@ -1,8 +1,6 @@
 import { concat } from '../../decode/bytes'
 import type { Ligature } from '../plan'
-import { prefixSums, tag, u16 } from '../write'
-
-const GSUB_HEADER_SIZE = 10
+import { prefixSums, struct, tag, u16, withSections } from '../write'
 
 // longer sequences first, so extended sequences win over their prefixes
 const byPreference = (a: Ligature, b: Ligature) => {
@@ -14,7 +12,11 @@ const byPreference = (a: Ligature, b: Ligature) => {
 }
 
 const ligatureBytes = ({ components, glyph }: Ligature) => {
-  return concat([u16(glyph), u16(components.length), ...components.slice(1).map(u16)])
+  return struct([
+    ['ligatureGlyph', u16(glyph)],
+    ['componentCount', u16(components.length)],
+    ['componentGlyphIds', concat(components.slice(1).map(u16))],
+  ])
 }
 
 const ligatureSet = (ligatures: Ligature[]) => {
@@ -39,7 +41,11 @@ const ligatureSubst = (ligatures: Ligature[]) => {
   const groups = [...grouped].toSorted(([a], [b]) => a - b)
 
   const sets = groups.map(([_, list]) => ligatureSet(list))
-  const coverage = concat([u16(1), u16(groups.length), ...groups.map(([glyph]) => u16(glyph))])
+  const coverage = struct([
+    ['coverageFormat', u16(1)],
+    ['glyphCount', u16(groups.length)],
+    ['glyphArray', concat(groups.map(([glyph]) => u16(glyph)))],
+  ])
   const headerSize = 6 + sets.length * 2
   const setOffsets = prefixSums(
     sets.map(({ length }) => length),
@@ -60,22 +66,60 @@ const ligatureSubst = (ligatures: Ligature[]) => {
 // one ccmp lookup of type 4 (ligature substitution) under the default script
 export const buildGsub = (ligatures: Ligature[]) => {
   const subtable = ligatureSubst(ligatures)
-  const lookup = concat([u16(4), u16(0), u16(1), u16(8), subtable])
-  const lookupList = concat([u16(1), u16(4), lookup])
-  const feature = concat([u16(0), u16(1), u16(0)])
-  const featureList = concat([u16(1), tag('ccmp'), u16(8), feature])
-  const langSys = concat([u16(0), u16(0xffff), u16(1), u16(0)])
-  const script = concat([u16(4), u16(0), langSys])
-  const scriptList = concat([u16(1), tag('DFLT'), u16(8), script])
-
-  return concat([
-    u16(1),
-    u16(0),
-    u16(GSUB_HEADER_SIZE),
-    u16(GSUB_HEADER_SIZE + scriptList.length),
-    u16(GSUB_HEADER_SIZE + scriptList.length + featureList.length),
-    scriptList,
-    featureList,
-    lookupList,
+  const lookup = struct([
+    ['lookupType', u16(4)],
+    ['lookupFlag', u16(0)],
+    ['subTableCount', u16(1)],
+    ['subtableOffset', u16(8)],
+    ['subtable', subtable],
   ])
+  const lookupList = struct([
+    ['lookupCount', u16(1)],
+    ['lookupOffset', u16(4)],
+    ['lookup', lookup],
+  ])
+  const feature = struct([
+    ['featureParamsOffset', u16(0)],
+    ['lookupIndexCount', u16(1)],
+    ['lookupListIndex', u16(0)],
+  ])
+  const featureList = struct([
+    ['featureCount', u16(1)],
+    ['featureTag', tag('ccmp')],
+    ['featureOffset', u16(8)],
+    ['feature', feature],
+  ])
+  const langSys = struct([
+    ['lookupOrderOffset', u16(0)],
+    ['requiredFeatureIndex', u16(0xffff)],
+    ['featureIndexCount', u16(1)],
+    ['featureIndex', u16(0)],
+  ])
+  const script = struct([
+    ['defaultLangSysOffset', u16(4)],
+    ['langSysCount', u16(0)],
+    ['defaultLangSys', langSys],
+  ])
+  const scriptList = struct([
+    ['scriptCount', u16(1)],
+    ['scriptTag', tag('DFLT')],
+    ['scriptOffset', u16(8)],
+    ['script', script],
+  ])
+
+  return withSections(
+    (offsetOf) =>
+      struct([
+        ['majorVersion', u16(1)],
+        ['minorVersion', u16(0)],
+        ['scriptListOffset', u16(offsetOf('scriptList'))],
+        ['featureListOffset', u16(offsetOf('featureList'))],
+        ['lookupListOffset', u16(offsetOf('lookupList'))],
+      ]),
+    [
+      ['scriptList', scriptList],
+      ['featureList', featureList],
+      ['lookupList', lookupList],
+    ],
+  )
 }

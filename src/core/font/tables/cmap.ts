@@ -1,5 +1,5 @@
 import { concat } from '../../decode/bytes'
-import { i16, prefixSums, u16, u32 } from '../write'
+import { i16, prefixSums, struct, u16, u32, withSections } from '../write'
 
 type Group = { start: number; end: number; glyph: number }
 type Segment = { start: number; end: number; glyphs: number[] }
@@ -33,15 +33,23 @@ const toGroups = (entries: [number, number][]) => {
 
 const format12 = (entries: [number, number][]) => {
   const groups = toGroups(entries)
-  const length = 16 + groups.length * 12
+  const records = concat(
+    groups.map(({ start, end, glyph }) =>
+      struct([
+        ['startCharCode', u32(start)],
+        ['endCharCode', u32(end)],
+        ['startGlyphId', u32(glyph)],
+      ]),
+    ),
+  )
 
-  return concat([
-    u16(12),
-    u16(0),
-    u32(length),
-    u32(0),
-    u32(groups.length),
-    ...groups.map(({ start, end, glyph }) => concat([u32(start), u32(end), u32(glyph)])),
+  return struct([
+    ['format', u16(12)],
+    ['reserved', u16(0)],
+    ['length', u32(16 + records.length)],
+    ['language', u32(0)],
+    ['numGroups', u32(groups.length)],
+    ['groups', records],
   ])
 }
 
@@ -69,24 +77,26 @@ const format4 = (entries: [number, number][]) => {
   const searchRange = 2 ** (entrySelector + 1)
   const length = 16 + segCount * 8 + glyphIds.length * 2
 
-  return concat([
-    u16(4),
-    u16(length),
-    u16(0),
-    u16(segCount * 2),
-    u16(searchRange),
-    u16(entrySelector),
-    u16(segCount * 2 - searchRange),
-    ...segments.map(({ end }) => u16(end)),
-    u16(0xffff),
-    u16(0),
-    ...segments.map(({ start }) => u16(start)),
-    u16(0xffff),
-    ...segments.map(() => i16(0)),
-    i16(1),
-    ...segments.map((_, index) => u16(2 * (segCount - index + glyphStarts[index]))),
-    u16(0),
-    ...glyphIds.map(u16),
+  return struct([
+    ['format', u16(4)],
+    ['length', u16(length)],
+    ['language', u16(0)],
+    ['segCountX2', u16(segCount * 2)],
+    ['searchRange', u16(searchRange)],
+    ['entrySelector', u16(entrySelector)],
+    ['rangeShift', u16(segCount * 2 - searchRange)],
+    ['endCode', concat([...segments.map(({ end }) => u16(end)), u16(0xffff)])],
+    ['reservedPad', u16(0)],
+    ['startCode', concat([...segments.map(({ start }) => u16(start)), u16(0xffff)])],
+    ['idDelta', concat([...segments.map(() => i16(0)), i16(1)])],
+    [
+      'idRangeOffset',
+      concat([
+        ...segments.map((_, index) => u16(2 * (segCount - index + glyphStarts[index]))),
+        u16(0),
+      ]),
+    ],
+    ['glyphIdArray', concat(glyphIds.map(u16))],
   ])
 }
 
@@ -95,18 +105,22 @@ export const buildCmap = (cmap: Map<number, number>) => {
   const bmp = entries.filter(([codePoint]) => codePoint < 0xffff)
   const sub4 = format4(bmp)
   const sub12 = format12(entries)
-  const sub4Offset = 4 + 2 * 8
 
-  return concat([
-    u16(0),
-    u16(2),
-    u16(3),
-    u16(1),
-    u32(sub4Offset),
-    u16(3),
-    u16(10),
-    u32(sub4Offset + sub4.length),
-    sub4,
-    sub12,
-  ])
+  return withSections(
+    (offsetOf) =>
+      struct([
+        ['version', u16(0)],
+        ['numTables', u16(2)],
+        ['bmpPlatformId', u16(3)],
+        ['bmpEncodingId', u16(1)],
+        ['bmpSubtableOffset', u32(offsetOf('sub4'))],
+        ['fullPlatformId', u16(3)],
+        ['fullEncodingId', u16(10)],
+        ['fullSubtableOffset', u32(offsetOf('sub12'))],
+      ]),
+    [
+      ['sub4', sub4],
+      ['sub12', sub12],
+    ],
+  )
 }

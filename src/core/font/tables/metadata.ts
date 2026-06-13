@@ -1,7 +1,7 @@
 import { concat } from '../../decode/bytes'
 import { ASCENT, DESCENT, type Rect, UNITS_PER_EM } from '../glyphs'
 import type { PlannedGlyph } from '../plan'
-import { i16, prefixSums, tag, u16, u32 } from '../write'
+import { i16, prefixSums, struct, tag, u16, u32, withSections } from '../write'
 import { boundsOf, type GlyphBounds } from './glyf'
 
 const HEAD_MAGIC = 0x5f0f3cf5
@@ -17,25 +17,25 @@ export const buildHead = (bounds: GlyphBounds[]) => {
 
   const { xMin, yMin, xMax, yMax } = boundsOf(boxes)
 
-  return concat([
-    u16(1),
-    u16(0),
-    u32(0x00010000),
-    u32(0),
-    u32(HEAD_MAGIC),
-    u16(HEAD_FLAGS),
-    u16(UNITS_PER_EM),
-    new Uint8Array(8),
-    new Uint8Array(8),
-    i16(xMin),
-    i16(yMin),
-    i16(xMax),
-    i16(yMax),
-    u16(0),
-    u16(8),
-    i16(2),
-    i16(1),
-    i16(0),
+  return struct([
+    ['majorVersion', u16(1)],
+    ['minorVersion', u16(0)],
+    ['fontRevision', u32(0x00010000)],
+    ['checksumAdjustment', u32(0)],
+    ['magicNumber', u32(HEAD_MAGIC)],
+    ['flags', u16(HEAD_FLAGS)],
+    ['unitsPerEm', u16(UNITS_PER_EM)],
+    ['created', new Uint8Array(8)],
+    ['modified', new Uint8Array(8)],
+    ['xMin', i16(xMin)],
+    ['yMin', i16(yMin)],
+    ['xMax', i16(xMax)],
+    ['yMax', i16(yMax)],
+    ['macStyle', u16(0)],
+    ['lowestRecPpem', u16(8)],
+    ['fontDirectionHint', i16(2)],
+    ['indexToLocFormat', i16(1)],
+    ['glyphDataFormat', i16(0)],
   ])
 }
 
@@ -49,52 +49,59 @@ export const buildHhea = (glyphs: PlannedGlyph[], bounds: GlyphBounds[]) => {
   const minRsb = paired.reduce((min, { advance, box }) => Math.min(min, advance - box.xMax), 0)
   const extent = paired.reduce((max, { box }) => Math.max(max, box.xMax), 0)
 
-  return concat([
-    u16(1),
-    u16(0),
-    i16(ASCENT),
-    i16(DESCENT),
-    i16(0),
-    u16(advanceMax),
-    i16(minLsb),
-    i16(minRsb),
-    i16(extent),
-    i16(1),
-    i16(0),
-    i16(0),
-    i16(0),
-    i16(0),
-    i16(0),
-    i16(0),
-    i16(0),
-    u16(glyphs.length),
+  return struct([
+    ['majorVersion', u16(1)],
+    ['minorVersion', u16(0)],
+    ['ascender', i16(ASCENT)],
+    ['descender', i16(DESCENT)],
+    ['lineGap', i16(0)],
+    ['advanceWidthMax', u16(advanceMax)],
+    ['minLeftSideBearing', i16(minLsb)],
+    ['minRightSideBearing', i16(minRsb)],
+    ['xMaxExtent', i16(extent)],
+    ['caretSlopeRise', i16(1)],
+    ['caretSlopeRun', i16(0)],
+    ['caretOffset', i16(0)],
+    ['reserved0', i16(0)],
+    ['reserved1', i16(0)],
+    ['reserved2', i16(0)],
+    ['reserved3', i16(0)],
+    ['metricDataFormat', i16(0)],
+    ['numberOfHMetrics', u16(glyphs.length)],
   ])
 }
 
 export const buildMaxp = (glyphs: PlannedGlyph[]) => {
   const maxContours = glyphs.reduce((max, { rects }) => Math.max(max, rects.length), 0)
 
-  return concat([
-    u32(0x00010000),
-    u16(glyphs.length),
-    u16(maxContours * 4),
-    u16(maxContours),
-    u16(0),
-    u16(0),
-    u16(2),
-    u16(0),
-    u16(0),
-    u16(0),
-    u16(0),
-    u16(0),
-    u16(0),
-    u16(0),
-    u16(0),
+  return struct([
+    ['version', u32(0x00010000)],
+    ['numGlyphs', u16(glyphs.length)],
+    ['maxPoints', u16(maxContours * 4)],
+    ['maxContours', u16(maxContours)],
+    ['maxCompositePoints', u16(0)],
+    ['maxCompositeContours', u16(0)],
+    ['maxZones', u16(2)],
+    ['maxTwilightPoints', u16(0)],
+    ['maxStorage', u16(0)],
+    ['maxFunctionDefs', u16(0)],
+    ['maxInstructionDefs', u16(0)],
+    ['maxStackElements', u16(0)],
+    ['maxSizeOfInstructions', u16(0)],
+    ['maxComponentElements', u16(0)],
+    ['maxComponentDepth', u16(0)],
   ])
 }
 
 export const buildHmtx = (glyphs: PlannedGlyph[], bounds: GlyphBounds[]) =>
-  concat(glyphs.map(({ advance }, index) => concat([u16(advance), i16(bounds[index]?.xMin ?? 0)])))
+  concat(
+    glyphs.map(({ advance }, index) =>
+      struct([
+        ['advanceWidth', u16(advance)],
+        ['lsb', i16(bounds[index]?.xMin ?? 0)],
+      ]),
+    ),
+  )
 
 const NAMES = [
   [1, 'Serenity Emoji'],
@@ -116,15 +123,32 @@ export const buildName = () => {
   const encoded = NAMES.map(([id, value]) => ({ id, data: utf16be(value) }))
   const starts = prefixSums(encoded.map(({ data }) => data.length))
 
-  return concat([
-    u16(0),
-    u16(encoded.length),
-    u16(6 + encoded.length * 12),
-    ...encoded.map(({ id, data }, index) =>
-      concat([u16(3), u16(1), u16(0x0409), u16(id), u16(data.length), u16(starts[index])]),
+  const records = concat(
+    encoded.map(({ id, data }, index) =>
+      struct([
+        ['platformId', u16(3)],
+        ['encodingId', u16(1)],
+        ['languageId', u16(0x0409)],
+        ['nameId', u16(id)],
+        ['length', u16(data.length)],
+        ['stringOffset', u16(starts[index])],
+      ]),
     ),
-    ...encoded.map(({ data }) => data),
-  ])
+  )
+  const storage = concat(encoded.map(({ data }) => data))
+
+  return withSections(
+    (offsetOf) =>
+      struct([
+        ['format', u16(0)],
+        ['count', u16(encoded.length)],
+        ['storageOffset', u16(offsetOf('storage'))],
+      ]),
+    [
+      ['records', records],
+      ['storage', storage],
+    ],
+  )
 }
 
 export const buildOs2 = (glyphs: PlannedGlyph[], cmap: Map<number, number>, maxContext: number) => {
@@ -132,57 +156,57 @@ export const buildOs2 = (glyphs: PlannedGlyph[], cmap: Map<number, number>, maxC
   const last = cmap.keys().reduce((max, cp) => Math.max(max, cp), 0)
   const total = glyphs.reduce((sum, { advance }) => sum + advance, 0)
 
-  return concat([
-    u16(4),
-    i16(Math.round(total / glyphs.length)),
-    u16(400),
-    u16(5),
-    u16(0),
-    i16(512),
-    i16(512),
-    i16(0),
-    i16(0),
-    i16(512),
-    i16(512),
-    i16(0),
-    i16(0),
-    i16(51),
-    i16(256),
-    i16(0),
-    new Uint8Array(10),
-    u32(0),
-    u32(0),
-    u32(0),
-    u32(0),
-    tag('SREN'),
-    u16(0x0040),
-    u16(Math.min(first, 0xffff)),
-    u16(Math.min(last, 0xffff)),
-    i16(ASCENT),
-    i16(DESCENT),
-    i16(0),
-    u16(ASCENT),
-    u16(-DESCENT),
-    u32(0),
-    u32(0),
-    i16(0),
-    i16(0),
-    u16(0),
-    u16(0x20),
-    u16(maxContext),
+  return struct([
+    ['version', u16(4)],
+    ['xAvgCharWidth', i16(Math.round(total / glyphs.length))],
+    ['usWeightClass', u16(400)],
+    ['usWidthClass', u16(5)],
+    ['fsType', u16(0)],
+    ['ySubscriptXSize', i16(512)],
+    ['ySubscriptYSize', i16(512)],
+    ['ySubscriptXOffset', i16(0)],
+    ['ySubscriptYOffset', i16(0)],
+    ['ySuperscriptXSize', i16(512)],
+    ['ySuperscriptYSize', i16(512)],
+    ['ySuperscriptXOffset', i16(0)],
+    ['ySuperscriptYOffset', i16(0)],
+    ['yStrikeoutSize', i16(51)],
+    ['yStrikeoutPosition', i16(256)],
+    ['sFamilyClass', i16(0)],
+    ['panose', new Uint8Array(10)],
+    ['ulUnicodeRange1', u32(0)],
+    ['ulUnicodeRange2', u32(0)],
+    ['ulUnicodeRange3', u32(0)],
+    ['ulUnicodeRange4', u32(0)],
+    ['achVendID', tag('SREN')],
+    ['fsSelection', u16(0x0040)],
+    ['usFirstCharIndex', u16(Math.min(first, 0xffff))],
+    ['usLastCharIndex', u16(Math.min(last, 0xffff))],
+    ['sTypoAscender', i16(ASCENT)],
+    ['sTypoDescender', i16(DESCENT)],
+    ['sTypoLineGap', i16(0)],
+    ['usWinAscent', u16(ASCENT)],
+    ['usWinDescent', u16(-DESCENT)],
+    ['ulCodePageRange1', u32(0)],
+    ['ulCodePageRange2', u32(0)],
+    ['sxHeight', i16(0)],
+    ['sCapHeight', i16(0)],
+    ['usDefaultChar', u16(0)],
+    ['usBreakChar', u16(0x20)],
+    ['usMaxContext', u16(maxContext)],
   ])
 }
 
 export const buildPost = () => {
-  return concat([
-    u32(0x00030000),
-    u32(0),
-    i16(-100),
-    i16(50),
-    u32(0),
-    u32(0),
-    u32(0),
-    u32(0),
-    u32(0),
+  return struct([
+    ['version', u32(0x00030000)],
+    ['italicAngle', u32(0)],
+    ['underlinePosition', i16(-100)],
+    ['underlineThickness', i16(50)],
+    ['isFixedPitch', u32(0)],
+    ['minMemType42', u32(0)],
+    ['maxMemType42', u32(0)],
+    ['minMemType1', u32(0)],
+    ['maxMemType1', u32(0)],
   ])
 }
