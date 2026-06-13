@@ -97,20 +97,39 @@ describe('buildHmtx', () => {
   })
 })
 
+const decodeUtf16be = (data: Uint8Array) =>
+  [...Array(data.length / 2)]
+    .map((_, index) => String.fromCharCode(u16At(data, index * 2)))
+    .join('')
+
+const parseNames = (name: Uint8Array) => {
+  const count = u16At(name, 2)
+  const storageOffset = u16At(name, 4)
+
+  return new Map(
+    [...Array(count)].map((_, index) => {
+      const record = 6 + index * 12
+      const id = u16At(name, record + 6)
+      const length = u16At(name, record + 8)
+      const start = storageOffset + u16At(name, record + 10)
+      return [id, decodeUtf16be(name.subarray(start, start + length))]
+    }),
+  )
+}
+
 describe('buildName', () => {
-  it('stores windows unicode records pointing into the string data', () => {
+  it('stores windows unicode records for identity and licensing', () => {
     const name = buildName()
 
-    expect(u16At(name, 0)).toBe(0)
-    expect(u16At(name, 2)).toBe(6)
-    expect(u16At(name, 4)).toBe(78)
     expect(u16At(name, 6)).toBe(3)
     expect(u16At(name, 8)).toBe(1)
     expect(u16At(name, 10)).toBe(0x0409)
-    expect(u16At(name, 12)).toBe(1)
-    expect(u16At(name, 14)).toBe('Serenity Emoji'.length * 2)
-    expect(u16At(name, 16)).toBe(0)
-    expect(u16At(name, 78)).toBe('S'.charCodeAt(0))
+
+    const names = parseNames(name)
+    expect(names.get(1)).toBe('Serenity Emoji')
+    expect(names.get(0)).toBe('Copyright (c) the SerenityOS developers')
+    expect(names.get(14)).toBe('https://github.com/SerenityOS/serenity/blob/master/LICENSE')
+    expect(names.get(13)).toContain('BSD-2-Clause')
   })
 })
 

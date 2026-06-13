@@ -9,6 +9,7 @@ import { toPng } from '../domain/image/png'
 import { scaleToFit } from '../domain/image/scale'
 import { toSvg } from '../domain/image/svg'
 import { findGrid } from '../storage/grids'
+import { licenseHeaderMiddleware } from './middlewares/license'
 
 const CACHE_CONTROL = 'public, max-age=3600'
 const DEFAULT_PNG_SIZE = 512
@@ -24,6 +25,7 @@ const QuerySchema = v.object({
 })
 
 export const emojiRoutes = new Hono<AppEnv>()
+  .use(licenseHeaderMiddleware)
   .get('/:emoji', sValidator('param', ParamSchema), sValidator('query', QuerySchema), async (c) => {
     const { emoji: stem } = c.req.valid('param')
     const grid = await findGrid(stem)

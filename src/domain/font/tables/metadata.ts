@@ -1,4 +1,5 @@
 import { concat, i16, u16, u32 } from '../../../lib/bytes'
+import { fontNameRecords } from '../../attribution'
 import { ASCENT, DESCENT, type Rect, UNITS_PER_EM } from '../glyphs'
 import type { PlannedGlyph } from '../plan'
 import { prefixSums, struct, tag, withSections } from '../write'
@@ -120,7 +121,8 @@ const utf16be = (value: string) => {
 }
 
 export const buildName = () => {
-  const encoded = NAMES.map(([id, value]) => ({ id, data: utf16be(value) }))
+  const all = [...NAMES, ...fontNameRecords()].toSorted(([a], [b]) => a - b)
+  const encoded = all.map(([id, value]) => ({ id, data: utf16be(value) }))
   const starts = prefixSums(encoded.map(({ data }) => data.length))
 
   const records = concat(

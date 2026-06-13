@@ -1,4 +1,5 @@
 import { hex } from '../../lib/bytes'
+import { svgMetadata } from '../attribution'
 import { type DotGrid, type Rgba, type Run, toRuns } from '../dot-grid'
 import { dimensionsOf, fitTo, type SizeOptions } from './scale'
 
@@ -22,5 +23,5 @@ export const toSvg = (pixels: DotGrid, options: SizeOptions = {}) => {
   const rects = pixels.flatMap((row, y) => toRuns(row).map((run) => toRect(run, y)))
   const open = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${fitted.width}" height="${fitted.height}" shape-rendering="crispEdges">`
 
-  return `${open}${rects.join('')}</svg>`
+  return `${open}${svgMetadata()}${rects.join('')}</svg>`
 }

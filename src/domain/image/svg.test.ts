@@ -13,8 +13,18 @@ describe('toSvg', () => {
 
     expect(svg).toBe(
       '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1" width="1" height="1" shape-rendering="crispEdges">' +
+        '<metadata>Copyright (c) the SerenityOS developers. BSD-2-Clause: ' +
+        'https://github.com/SerenityOS/serenity/blob/master/LICENSE</metadata>' +
         '<rect x="0" y="0" width="1" height="1" fill="#ff0000"/></svg>',
     )
+  })
+
+  it('embeds the upstream license in a metadata element', () => {
+    const grid = [[rgba(255, 0, 0)]]
+
+    const svg = toSvg(grid)
+
+    expect(svg).toContain('<metadata>Copyright (c) the SerenityOS developers. BSD-2-Clause:')
   })
 
   it('pads hex color channels to two digits', () => {

@@ -66,6 +66,24 @@ describe('toPng', () => {
     ])
   })
 
+  it('embeds the upstream license as tEXt chunks', async () => {
+    const grid = [[rgba(255, 0, 0)]]
+
+    const png = await toPng(grid)
+    const text = Array.from(png, (byte) => String.fromCharCode(byte)).join('')
+
+    expect(text).toContain('Copyright\0Copyright (c) the SerenityOS developers')
+    expect(text).toContain('License\0BSD-2-Clause')
+  })
+
+  it('keeps round-tripping despite the added metadata', async () => {
+    const grid = [[rgba(1, 2, 3), rgba(4, 5, 6)]]
+
+    const decoded = await decodePng(await toPng(grid))
+
+    expect(decoded).toEqual(grid)
+  })
+
   it('throws on an empty grid', async () => {
     const grids = [[], [[], []]]
 

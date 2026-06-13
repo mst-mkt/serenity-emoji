@@ -1,5 +1,6 @@
 import { concat, crc32, u32 } from '../../lib/bytes'
 import { deflate } from '../../lib/zlib'
+import { pngTextRecords } from '../attribution'
 import type { DotGrid, Rgba } from '../dot-grid'
 import { SIGNATURE } from './decode/chunks'
 import { dimensionsOf, scaleToFit, type SizeOptions } from './scale'
@@ -7,6 +8,13 @@ import { dimensionsOf, scaleToFit, type SizeOptions } from './scale'
 const chunk = (type: string, data: Uint8Array) => {
   const body = concat([new TextEncoder().encode(type), data])
   return concat([u32(data.length), body, u32(crc32(body))])
+}
+
+// tEXt stores Latin-1; the records here are ascii, so utf-8 bytes match
+const textChunk = (keyword: string, value: string) => {
+  const encoder = new TextEncoder()
+  const data = concat([encoder.encode(keyword), Uint8Array.from([0]), encoder.encode(value)])
+  return chunk('tEXt', data)
 }
 
 // 8-bit RGBA (color type 6), no interlace
@@ -26,11 +34,13 @@ export const toPng = async (pixels: DotGrid, options: SizeOptions = {}) => {
   if (width === 0 || height === 0) throw new Error('cannot render an empty grid')
 
   const idat = await deflate(concat(grid.map((row) => toScanline(row, width))))
+  const metadata = pngTextRecords().map(([keyword, value]) => textChunk(keyword, value))
 
   return concat([
     Uint8Array.from(SIGNATURE),
     ihdr(width, height),
     chunk('IDAT', idat),
+    ...metadata,
     chunk('IEND', new Uint8Array(0)),
   ])
 }

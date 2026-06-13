@@ -14,6 +14,7 @@ import {
   IMMUTABLE_CACHE,
   LATEST_CACHE,
 } from '../storage/fonts'
+import { licenseHeaderMiddleware } from './middlewares/license'
 
 const fontFileQuerySchema = v.object({
   text: v.optional(v.string()),
@@ -26,6 +27,7 @@ const fontHeaders = (parsed: FontFile, cacheControl: string, etag?: string) => (
 })
 
 export const fontRoutes = new Hono<AppEnv>()
+  .use(licenseHeaderMiddleware)
   .get('/serenity-emoji.css', async (c) => {
     const raw = await getFontManifest()
     if (raw === null) return c.text('font manifest not found', 404)
