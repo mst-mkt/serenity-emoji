@@ -1,6 +1,7 @@
 import { env } from 'cloudflare:workers'
 
 import { sha256Hex } from '../core/digest'
+import type { SubsetEntry } from '../core/font/subsets'
 import type { FontFormat } from './font-file'
 
 const latestKeyOf = (subset: string, format: FontFormat) =>
@@ -47,3 +48,11 @@ export const putFontTarget = (digest: string) => env.KV.put(TARGET_KEY, digest)
 export const getFontBuilt = () => env.KV.get(BUILT_KEY)
 
 export const putFontBuilt = (digest: string) => env.KV.put(BUILT_KEY, digest)
+
+const MANIFEST_KEY = 'font:manifest'
+
+export const getFontManifest = () => env.KV.get(MANIFEST_KEY)
+
+export const putFontManifest = (manifest: SubsetEntry[]) => {
+  return env.KV.put(MANIFEST_KEY, JSON.stringify(manifest))
+}

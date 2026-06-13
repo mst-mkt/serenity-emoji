@@ -1,7 +1,7 @@
 import type { DotGrid } from '../core/dot-grid'
 import { buildFonts } from '../core/font/index'
-import { FULL_SUBSET, splitBySubset } from '../core/font/subsets'
-import { putFont, putFontBuilt } from '../storage/fonts'
+import { FULL_SUBSET, manifestOf, splitBySubset } from '../core/font/subsets'
+import { putFont, putFontBuilt, putFontManifest } from '../storage/fonts'
 import { getSnapshot } from '../storage/snapshot'
 
 const buildSubset = async (subset: string, grids: Map<string, DotGrid>) => {
@@ -23,5 +23,7 @@ export const buildFontSubsets = async (target: string) => {
     await buildSubset(subset, subGrids)
   }
 
+  const manifest = [{ subset: FULL_SUBSET, range: null }, ...manifestOf(buckets)]
+  await putFontManifest(manifest)
   await putFontBuilt(target)
 }

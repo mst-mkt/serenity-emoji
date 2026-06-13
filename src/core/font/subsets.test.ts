@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vite-plus/test'
 
 import type { DotGrid } from '../dot-grid'
 import { rgba } from '../fixtures'
-import { splitBySubset } from './subsets'
+import { manifestOf, splitBySubset, toUnicodeRange } from './subsets'
 
 const cell: DotGrid = [[rgba(255, 0, 0)]]
 
@@ -28,5 +28,33 @@ describe('splitBySubset', () => {
     const buckets = splitBySubset(grids)
 
     expect(buckets.size).toBe(0)
+  })
+})
+
+describe('toUnicodeRange', () => {
+  it('compresses consecutive codepoints into ranges', () => {
+    const range = toUnicodeRange([0x1f600, 0x1f601, 0x1f602, 0x1f680])
+
+    expect(range).toBe('U+1F600-1F602, U+1F680')
+  })
+
+  it('returns an empty string for no codepoints', () => {
+    expect(toUnicodeRange([])).toBe('')
+  })
+})
+
+describe('manifestOf', () => {
+  it('lists subsets sorted by name with their unicode-range', () => {
+    const grids = new Map<string, DotGrid>([
+      ['U+1F436', cell], // 🐶 animals-nature
+      ['U+1F600', cell], // 😀 smileys-emotion
+    ])
+
+    const manifest = manifestOf(splitBySubset(grids))
+
+    expect(manifest).toEqual([
+      { subset: 'animals-nature', range: 'U+1F436' },
+      { subset: 'smileys-emotion', range: 'U+1F600' },
+    ])
   })
 })
