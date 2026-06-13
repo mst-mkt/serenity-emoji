@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { planSync } from './plan'
+import { digestOfEntries, nextStored, planSync } from './plan'
 
 describe('planSync', () => {
   it('puts entries that are not stored yet', () => {
@@ -53,5 +53,70 @@ describe('planSync', () => {
     ])
     expect(plan.deletes).toEqual(['U+0034'])
     expect(plan.remaining).toBe(1)
+  })
+})
+
+describe('nextStored', () => {
+  it('adds applied entries with their new sha', () => {
+    const stored = [{ name: 'U+1F600', sha: 'a' }]
+    const applied = [{ name: 'U+1F601', sha: 'b', grid: [] }]
+
+    const next = nextStored(stored, applied, [])
+
+    expect(next).toEqual([
+      { name: 'U+1F600', sha: 'a' },
+      { name: 'U+1F601', sha: 'b' },
+    ])
+  })
+
+  it('replaces a stored entry with its applied update', () => {
+    const stored = [{ name: 'U+1F600', sha: 'a' }]
+    const applied = [{ name: 'U+1F600', sha: 'b', grid: [] }]
+
+    const next = nextStored(stored, applied, [])
+
+    expect(next).toEqual([{ name: 'U+1F600', sha: 'b' }])
+  })
+
+  it('drops deleted entries', () => {
+    const stored = [
+      { name: 'U+1F600', sha: 'a' },
+      { name: 'U+1F601', sha: 'b' },
+    ]
+
+    const next = nextStored(stored, [], ['U+1F600'])
+
+    expect(next).toEqual([{ name: 'U+1F601', sha: 'b' }])
+  })
+
+  it('keeps untouched stored entries with their existing sha', () => {
+    const stored = [{ name: 'U+1F600', sha: 'a' }]
+
+    const next = nextStored(stored, [], [])
+
+    expect(next).toEqual([{ name: 'U+1F600', sha: 'a' }])
+  })
+})
+
+describe('digestOfEntries', () => {
+  it('is independent of entry order', async () => {
+    const entries = [
+      { name: 'U+1F600', sha: 'a' },
+      { name: 'U+1F601', sha: 'b' },
+    ]
+
+    const digest = await digestOfEntries(entries)
+    const reversed = await digestOfEntries(entries.toReversed())
+
+    expect(reversed).toBe(digest)
+  })
+
+  it('changes when a sha changes', async () => {
+    const entries = [{ name: 'U+1F600', sha: 'a' }]
+
+    const digest = await digestOfEntries(entries)
+    const other = await digestOfEntries([{ name: 'U+1F600', sha: 'b' }])
+
+    expect(other).not.toBe(digest)
   })
 })

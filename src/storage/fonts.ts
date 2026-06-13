@@ -40,7 +40,7 @@ export const putFont = async (font: Uint8Array, subset: string, format: FontForm
   ])
 }
 
-// target is the snapshot digest the font should be built from, built the one it was built from;
+// target is the tree digest the font should be built from, built the one it was built from;
 // comparing them survives crashes and concurrent syncs, unlike a consumable dirty flag
 const TARGET_KEY = 'font:target'
 const BUILT_KEY = 'font:built'

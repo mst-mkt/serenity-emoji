@@ -3,18 +3,24 @@ import type { CronHandler } from 'kuron'
 import type { AppEnv } from '../bindings'
 import { getFontBuilt, getFontTarget, putFontTarget } from '../storage/fonts'
 import { listGrids } from '../storage/grids'
-import { applyTree, syncSnapshot } from '../sync/apply'
+import { applyTree } from '../sync/apply'
 import { buildFontSubsets } from '../sync/font'
 import { fetchEmojiTree, fetchHead } from '../sync/github'
+import { digestOfEntries, nextStored } from '../sync/plan'
 
 export const handleSync: CronHandler<AppEnv> = async () => {
   const commit = await fetchHead()
   const [tree, stored] = await Promise.all([fetchEmojiTree(commit), listGrids()])
 
-  const applied = await applyTree(commit, tree, stored)
-  const { changed, complete, digest } = await syncSnapshot(tree, stored, applied)
+  const { applied, deleted } = await applyTree(commit, tree, stored)
 
-  if (changed && complete) await putFontTarget(digest)
+  // a complete kv mirror of the tree is the only thing worth building a font from
+  const treeDigest = await digestOfEntries(tree)
+  const syncedDigest = await digestOfEntries(nextStored(stored, applied, deleted))
+  if (syncedDigest !== treeDigest) return
+
+  const target = await getFontTarget()
+  if (target !== treeDigest) await putFontTarget(treeDigest)
 }
 
 export const handleFontBuild: CronHandler<AppEnv> = async () => {

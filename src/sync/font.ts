@@ -12,13 +12,7 @@ import {
 } from '../core/font/subsets'
 import type { FontFile, FontFormat } from '../storage/font-file'
 import { getFontLatest, putFont, putFontBuilt, putFontManifest } from '../storage/fonts'
-import { getSnapshot } from '../storage/snapshot'
-
-const snapshotGrids = async () => {
-  const snapshot = await getSnapshot()
-  const entries = [...snapshot].map(([name, { grid }]) => [name, grid] as const)
-  return new Map(entries)
-}
+import { getAllGrids } from '../storage/grids'
 
 const buildAndStore = async (subset: string, grids: Map<string, DotGrid>) => {
   const fonts = await buildFonts(grids)
@@ -28,7 +22,7 @@ const buildAndStore = async (subset: string, grids: Map<string, DotGrid>) => {
 }
 
 export const buildFontSubsets = async (target: string) => {
-  const grids = await snapshotGrids()
+  const grids = await getAllGrids()
   if (grids.size === 0) return
 
   const buckets = splitBySubset(grids)
@@ -57,7 +51,7 @@ export const buildRangeFont = async (parsed: FontFile) => {
   const range = parseRange(parsed.subset)
   if (range === null) return null
 
-  const grids = await snapshotGrids()
+  const grids = await getAllGrids()
   return cacheAndPick(parsed.subset, selectByRange(grids, range), parsed.format)
 }
 
@@ -78,7 +72,7 @@ export const buildTextFont = async (text: string, format: FontFormat) => {
   const cached = await getFontLatest(subset, format)
   if (cached !== null) return { body: cached.body, etag: cached.httpEtag }
 
-  const grids = await snapshotGrids()
+  const grids = await getAllGrids()
   const built = await cacheAndPick(subset, selectByCodePoints(grids, codePoints), format)
   return built === null ? null : { body: built, etag: undefined }
 }
