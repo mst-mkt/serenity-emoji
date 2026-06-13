@@ -10,6 +10,7 @@ import { toSquare } from '../domain/image/square'
 import { toAnsi } from '../domain/render/ansi'
 import { toIco } from '../domain/render/ico'
 import { toIterm } from '../domain/render/iterm'
+import { toKitty } from '../domain/render/kitty'
 import { toPng } from '../domain/render/png'
 import { toSixel } from '../domain/render/sixel'
 import { toSvg } from '../domain/render/svg'
@@ -181,6 +182,25 @@ export const emojiRoutes = new Hono<AppEnv>()
       const iterm = toIterm(png)
 
       return c.body(iterm, 200, {
+        'content-type': 'text/plain; charset=utf-8',
+        'cache-control': CACHE_CONTROL,
+      })
+    },
+  )
+  .get(
+    '/:emoji/kitty',
+    sValidator('param', ParamSchema),
+    sValidator('query', QuerySchema),
+    async (c) => {
+      const { emoji: stem } = c.req.valid('param')
+      const { size, square } = c.req.valid('query')
+      const grid = await loadGrid(stem, square)
+      if (grid === null) return c.text('emoji not found', 404)
+
+      const png = await toPng(grid, { size: size ?? DEFAULT_SIZE })
+      const kitty = toKitty(png)
+
+      return c.body(kitty, 200, {
         'content-type': 'text/plain; charset=utf-8',
         'cache-control': CACHE_CONTROL,
       })
