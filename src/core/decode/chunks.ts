@@ -1,4 +1,4 @@
-import { concat, crc32 } from './bytes'
+import { concat, crc32 } from '../bytes'
 
 type Chunk = { type: string; data: Uint8Array }
 

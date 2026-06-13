@@ -1,8 +1,9 @@
+import { isHexChar } from '../chars'
+
 export type CodePointRange = { min: number; max: number }
 
 const MAX_CODE_POINT = 0x10ffff
 
-const isHexChar = (char: string) => (char >= '0' && char <= '9') || (char >= 'a' && char <= 'f')
 const isHex = (value: string) => value.length > 0 && value.split('').every(isHexChar)
 
 const toBound = (value: string) => {

@@ -1,6 +1,6 @@
-import { concat } from '../../decode/bytes'
+import { concat, i16, u16, u32 } from '../../bytes'
 import type { Rect } from '../glyphs'
-import { i16, pad4, prefixSums, struct, u16, u32 } from '../write'
+import { pad4, prefixSums, struct } from '../write'
 
 const ON_CURVE = 0x01
 const X_SHORT = 0x02

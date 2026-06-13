@@ -1,7 +1,7 @@
 import * as v from 'valibot'
 
 import type { DotGrid } from '../dot-grid'
-import { toCodePoints, VARIATION_SELECTOR } from '../emoji'
+import { toCodePoints, toUnit, VARIATION_SELECTOR } from '../emoji'
 import { EMOJI_GROUPS } from './emoji-groups.gen'
 import type { CodePointRange } from './range'
 
@@ -77,8 +77,6 @@ const coverageOf = (grids: Map<string, DotGrid>) => {
 
   return [...codePoints].toSorted((a, b) => a - b)
 }
-
-const toUnit = (codePoint: number) => `U+${codePoint.toString(16).toUpperCase()}`
 
 // for sorted input, the i-th run spans starts[i]..ends[i]
 export const toUnicodeRange = (codePoints: number[]) => {

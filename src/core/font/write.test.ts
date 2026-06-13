@@ -1,39 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { checksum, i16, pad4, tag, u16, u32 } from './write'
-
-describe('u16', () => {
-  it('encodes big-endian', () => {
-    const bytes = u16(0x1234)
-
-    expect([...bytes]).toEqual([0x12, 0x34])
-  })
-
-  it('rejects values out of range', () => {
-    expect(() => u16(0x10000)).toThrow('u16 out of range: 65536')
-    expect(() => u16(-1)).toThrow('u16 out of range: -1')
-  })
-})
-
-describe('i16', () => {
-  it('encodes negative values as two’s complement', () => {
-    const bytes = i16(-1)
-
-    expect([...bytes]).toEqual([0xff, 0xff])
-  })
-
-  it('rejects values out of range', () => {
-    expect(() => i16(0x8000)).toThrow('i16 out of range: 32768')
-  })
-})
-
-describe('u32', () => {
-  it('encodes big-endian', () => {
-    const bytes = u32(0x01020304)
-
-    expect([...bytes]).toEqual([1, 2, 3, 4])
-  })
-})
+import { checksum, pad4, tag } from './write'
 
 describe('tag', () => {
   it('encodes four ascii characters', () => {

@@ -1,7 +1,7 @@
-import { concat } from '../../decode/bytes'
+import { concat, i16, u16, u32 } from '../../bytes'
 import { ASCENT, DESCENT, type Rect, UNITS_PER_EM } from '../glyphs'
 import type { PlannedGlyph } from '../plan'
-import { i16, prefixSums, struct, tag, u16, u32, withSections } from '../write'
+import { prefixSums, struct, tag, withSections } from '../write'
 import { boundsOf, type GlyphBounds } from './glyf'
 
 const HEAD_MAGIC = 0x5f0f3cf5

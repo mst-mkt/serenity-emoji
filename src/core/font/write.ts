@@ -1,33 +1,4 @@
-import { concat } from '../decode/bytes'
-
-export const u16 = (value: number) => {
-  if (!Number.isInteger(value) || value < 0 || value > 0xffff) {
-    throw new Error(`u16 out of range: ${value}`)
-  }
-
-  return Uint8Array.from([(value >>> 8) & 255, value & 255])
-}
-
-export const i16 = (value: number) => {
-  if (!Number.isInteger(value) || value < -0x8000 || value > 0x7fff) {
-    throw new Error(`i16 out of range: ${value}`)
-  }
-
-  return u16(value < 0 ? value + 0x10000 : value)
-}
-
-export const u32 = (value: number) => {
-  if (!Number.isInteger(value) || value < 0 || value > 0xffffffff) {
-    throw new Error(`u32 out of range: ${value}`)
-  }
-
-  return Uint8Array.from([
-    (value >>> 24) & 255,
-    (value >>> 16) & 255,
-    (value >>> 8) & 255,
-    value & 255,
-  ])
-}
+import { concat } from '../bytes'
 
 export const tag = (value: string) => {
   if (value.length !== 4) throw new Error(`tag must be 4 characters: ${value}`)

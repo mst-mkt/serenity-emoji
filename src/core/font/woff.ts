@@ -1,7 +1,7 @@
-import { concat } from '../decode/bytes'
+import { concat, u16, u32 } from '../bytes'
 import { deflate } from '../zlib'
 import type { Sfnt } from './sfnt'
-import { pad4, prefixSums, struct, tag, u16, u32 } from './write'
+import { pad4, prefixSums, struct, tag } from './write'
 
 const HEADER_SIZE = 44
 const ENTRY_SIZE = 20

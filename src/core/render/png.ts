@@ -1,12 +1,8 @@
-import { concat, crc32 } from '../decode/bytes'
+import { concat, crc32, u32 } from '../bytes'
 import { SIGNATURE } from '../decode/chunks'
 import type { DotGrid, Rgba } from '../dot-grid'
 import { deflate } from '../zlib'
 import { dimensionsOf, scaleToFit, type SizeOptions } from './utils/scale'
-
-const u32 = (n: number) => {
-  return Uint8Array.from([(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255])
-}
 
 const chunk = (type: string, data: Uint8Array) => {
   const body = concat([new TextEncoder().encode(type), data])

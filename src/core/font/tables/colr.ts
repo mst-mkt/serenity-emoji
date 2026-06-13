@@ -1,7 +1,7 @@
-import { concat } from '../../decode/bytes'
+import { concat, u16, u32 } from '../../bytes'
 import type { Rgba } from '../../dot-grid'
 import type { ColorBase } from '../plan'
-import { prefixSums, struct, u16, u32, withSections } from '../write'
+import { prefixSums, struct, withSections } from '../write'
 
 // base glyph records must arrive sorted by glyph id for binary search
 export const buildColr = (bases: ColorBase[]) => {

@@ -1,6 +1,6 @@
-import { concat } from '../../decode/bytes'
+import { concat, u16 } from '../../bytes'
 import type { Ligature } from '../plan'
-import { prefixSums, struct, tag, u16, withSections } from '../write'
+import { prefixSums, struct, tag, withSections } from '../write'
 
 // longer sequences first, so extended sequences win over their prefixes
 const byPreference = (a: Ligature, b: Ligature) => {

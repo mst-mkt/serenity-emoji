@@ -1,3 +1,4 @@
+import { hex } from '../bytes'
 import { type DotGrid, type Rgba, type Run, toRuns } from '../dot-grid'
 import { dimensionsOf } from '../render/utils/scale'
 
@@ -10,7 +11,7 @@ export const ASCENT = 900
 export const DESCENT = ASCENT - UNITS_PER_EM
 
 export const colorKey = ({ r, g, b, a }: Rgba) => {
-  return [r, g, b, a].map((value) => value.toString(16).padStart(2, '0')).join('')
+  return [r, g, b, a].map(hex).join('')
 }
 
 type Span = Pick<Run, 'x' | 'width'>

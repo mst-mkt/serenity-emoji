@@ -1,4 +1,4 @@
-import { concat } from './bytes'
+import { inflate } from '../zlib'
 
 type LineMeta = { width: number; height: number; depth: number; channels: number }
 
@@ -26,32 +26,6 @@ const PREDICTORS = {
 } as const satisfies Record<number, Predictor>
 
 const isFilterType = (n: number): n is keyof typeof PREDICTORS => n in PREDICTORS
-
-// zlib inflate via web standard API (works on both Workers and Node)
-// reads incrementally and aborts past limit to stop decompression bombs
-const inflate = async (data: Uint8Array<ArrayBuffer>, limit: number) => {
-  const stream = new Response(data).body?.pipeThrough(new DecompressionStream('deflate'))
-  const reader = stream?.getReader()
-  if (reader === undefined) return EMPTY
-
-  const read = () =>
-    reader.read().catch((cause: unknown) => {
-      throw new Error('invalid png: corrupt zlib stream', { cause })
-    })
-
-  const readInto = async (acc: Uint8Array[], total: number): Promise<Uint8Array[]> => {
-    const { done, value } = await read()
-    if (done || value === undefined) return acc
-    if (total + value.length > limit) {
-      await reader.cancel()
-      throw new Error('invalid png: image data exceeds expected size')
-    }
-    acc.push(value)
-    return readInto(acc, total + value.length)
-  }
-
-  return concat(await readInto([], 0))
-}
 
 // unfilter one scanline (each byte depends on the previous, so mutate the local buffer)
 const unfilter = (raw: Uint8Array, prior: Uint8Array, bpp: number) => {

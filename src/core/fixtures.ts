@@ -1,4 +1,4 @@
-import { crc32 } from './decode/bytes'
+import { crc32 } from './bytes'
 import { SIGNATURE } from './decode/chunks'
 import { deflate as deflateBytes } from './zlib'
 

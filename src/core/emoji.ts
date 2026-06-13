@@ -1,4 +1,4 @@
-const toUnit = (codePoint: number) => `U+${codePoint.toString(16).toUpperCase()}`
+export const toUnit = (codePoint: number) => `U+${codePoint.toString(16).toUpperCase()}`
 
 export const toStem = (emoji: string) => {
   const emojiChars = Array.from(emoji, (char) => toUnit(char.codePointAt(0) ?? 0))

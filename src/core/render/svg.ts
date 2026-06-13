@@ -1,7 +1,6 @@
+import { hex } from '../bytes'
 import { type DotGrid, type Rgba, type Run, toRuns } from '../dot-grid'
 import { dimensionsOf, fitTo, type SizeOptions } from './utils/scale'
-
-const hex = (value: number) => value.toString(16).padStart(2, '0')
 
 const fill = (rgba: Rgba) => `#${hex(rgba.r)}${hex(rgba.g)}${hex(rgba.b)}`
 

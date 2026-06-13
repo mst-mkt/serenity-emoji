@@ -1,10 +1,10 @@
+import { isDigit, isHexChar } from '../core/chars'
+
 export type FontFormat = 'ttf' | 'woff'
 export type FontFile = { subset: string; digest: string | null; format: FontFormat }
 
-const isDigit = (char: string) => char >= '0' && char <= '9'
 const isSubsetChar = (char: string) => (char >= 'a' && char <= 'z') || isDigit(char) || char === '-'
 const isSubset = (value: string) => value.length > 0 && value.split('').every(isSubsetChar)
-const isHexChar = (char: string) => isDigit(char) || (char >= 'a' && char <= 'f')
 const isDigest = (value: string) => value.length === 16 && value.split('').every(isHexChar)
 const isFormat = (value: string): value is FontFormat => value === 'ttf' || value === 'woff'
 

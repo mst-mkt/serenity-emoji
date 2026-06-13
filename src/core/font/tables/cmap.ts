@@ -1,5 +1,5 @@
-import { concat } from '../../decode/bytes'
-import { i16, prefixSums, struct, u16, u32, withSections } from '../write'
+import { concat, i16, u16, u32 } from '../../bytes'
+import { prefixSums, struct, withSections } from '../write'
 
 type Group = { start: number; end: number; glyph: number }
 type Segment = { start: number; end: number; glyphs: number[] }

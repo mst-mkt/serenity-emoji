@@ -1,5 +1,5 @@
-import { concat } from '../decode/bytes'
-import { checksum, pad4, prefixSums, struct, tag, u16, u32 } from './write'
+import { concat, u16, u32 } from '../bytes'
+import { checksum, pad4, prefixSums, struct, tag } from './write'
 
 export type Table = { tag: string; data: Uint8Array }
 export type Sfnt = ReturnType<typeof assembleSfnt>
