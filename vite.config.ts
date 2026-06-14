@@ -15,6 +15,9 @@ export default defineConfig({
         command: 'wrangler deploy',
         cache: false,
       },
+      'test:ci': {
+        command: 'vp test run --reporter=default --reporter=github-actions',
+      },
     },
   },
   staged: {
