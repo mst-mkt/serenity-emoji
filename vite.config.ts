@@ -27,6 +27,7 @@ export default defineConfig({
     include: ['./src/**/*.test.{ts,tsx}', './scripts/**/*.test.{ts,tsx}'],
   },
   fmt: {
+    ignorePatterns: ['cloudflare-env.d.ts'],
     semi: false,
     singleQuote: true,
     sortImports: {},
