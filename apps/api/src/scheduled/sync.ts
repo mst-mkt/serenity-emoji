@@ -1,3 +1,4 @@
+import { ARTWORK_MAX_DIMENSION } from '@serenity-emoji/emoji'
 import { digestOfEntries, nextStored, planSync, type TreeEntry } from '@serenity-emoji/emoji/sync'
 import { decodePng } from '@serenity-emoji/image/decode'
 import type { DotGrid } from '@serenity-emoji/image/dot-grid'
@@ -7,7 +8,6 @@ import { getSyncedCommit, putSyncedCommit } from '../storage/cursor'
 import { getFontTarget, putFontTarget } from '../storage/fonts'
 import { deleteGrid, listGrids, putGrid } from '../storage/grids'
 
-const MAX_DIMENSION = 512
 const BATCH_LIMIT = 100
 
 type GridUpdate = { name: string; sha: string; grid: DotGrid }
@@ -31,7 +31,7 @@ const applyTree = async (commit: string, tree: TreeEntry[], stored: TreeEntry[])
   const results = await Promise.allSettled(
     puts.map(async ({ name, sha }) => {
       const bytes = await fetchEmojiPng(commit, name)
-      const grid = await decodePng(bytes, { maxDimension: MAX_DIMENSION })
+      const grid = await decodePng(bytes, { maxDimension: ARTWORK_MAX_DIMENSION })
       await putGrid(name, grid, sha)
       return { name, sha, grid }
     }),
