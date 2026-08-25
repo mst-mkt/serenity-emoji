@@ -8,7 +8,9 @@ export type PlannedGlyph = { advance: number; rects: Rect[] }
 export type Ligature = { components: number[]; glyph: number }
 export type ColorBase = { glyph: number; layers: { glyph: number; palette: number }[] }
 
-type Entry = { stem: string; codePoints: number[]; glyph: Glyph }
+export type ColorTable = 'colr' | 'cbdt'
+
+type Entry = { stem: string; codePoints: number[]; glyph: Glyph; grid: DotGrid }
 type Sequence = { codePoints: number[]; glyph: number }
 
 const MAX_GLYPHS = 0xffff
@@ -26,7 +28,7 @@ const planEntries = (grids: Map<string, DotGrid>) => {
   return [...grids]
     .map(([stem, grid]) => ({ stem, grid, codePoints: toCodePoints(stem) }))
     .filter(({ codePoints }) => !hasAsciiCodePoint(codePoints))
-    .map(({ stem, grid, codePoints }) => ({ stem, codePoints, glyph: toGlyph(grid) }))
+    .map(({ stem, grid, codePoints }) => ({ stem, codePoints, glyph: toGlyph(grid), grid }))
     .toSorted((a, b) => (a.stem < b.stem ? -1 : 1))
 }
 
@@ -127,24 +129,30 @@ const planLigatures = (sequences: Map<string, Sequence>, cmap: Map<number, numbe
     .toArray()
 }
 
-// [.notdef, base glyphs, zero-advance component glyphs, color layer glyphs]
-const planGlyphs = (entries: Entry[], componentCps: number[]) => [
+// [.notdef, base glyphs, zero-advance component glyphs, color layer glyphs (colr only)]
+const planGlyphs = (entries: Entry[], componentCps: number[], colorTable: ColorTable) => [
   { advance: NOTDEF_ADVANCE, rects: [] },
   ...entries.map(({ glyph }) => ({ advance: glyph.advance, rects: glyph.silhouette })),
   ...componentCps.map(() => ({ advance: 0, rects: [] })),
-  ...entries.flatMap(({ glyph }) =>
-    glyph.layers.map(({ rects }) => ({ advance: glyph.advance, rects })),
-  ),
+  ...(colorTable === 'colr'
+    ? entries.flatMap(({ glyph }) =>
+        glyph.layers.map(({ rects }) => ({ advance: glyph.advance, rects })),
+      )
+    : []),
 ]
 
-export const planFont = (grids: Map<string, DotGrid>) => {
+export const planFont = (grids: Map<string, DotGrid>, colorTable: ColorTable = 'colr') => {
   const entries = planEntries(grids)
   if (entries.length === 0) throw new Error('cannot plan a font with no glyphs')
 
   const { cmap, sequences, componentCps } = planMapping(entries)
-  const { palette, colorBases } = planColors(entries, componentCps.length)
+  const { palette, colorBases } =
+    colorTable === 'colr'
+      ? planColors(entries, componentCps.length)
+      : { palette: [], colorBases: [] }
   const ligatures = planLigatures(sequences, cmap)
-  const glyphs = planGlyphs(entries, componentCps)
+  const glyphs = planGlyphs(entries, componentCps, colorTable)
+  const bitmaps = entries.map(({ grid }, index) => ({ glyph: baseGid(index), grid }))
 
   if (glyphs.length > MAX_GLYPHS) {
     throw new Error(`font: ${glyphs.length} glyphs exceed the truetype limit`)
@@ -154,5 +162,5 @@ export const planFont = (grids: Map<string, DotGrid>) => {
     .values()
     .reduce((max, { codePoints }) => Math.max(max, codePoints.length), 1)
 
-  return { glyphs, cmap, ligatures, colorBases, palette, maxContext }
+  return { glyphs, cmap, ligatures, colorBases, palette, bitmaps, maxContext }
 }

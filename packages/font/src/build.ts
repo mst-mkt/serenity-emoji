@@ -1,7 +1,8 @@
 import type { DotGrid } from '@serenity-emoji/image/dot-grid'
 
-import { planFont } from './plan'
-import { assembleSfnt } from './sfnt'
+import { type ColorTable, planFont } from './plan'
+import { assembleSfnt, type Table } from './sfnt'
+import { buildCbdt } from './tables/cbdt'
 import { buildCmap } from './tables/cmap'
 import { buildColr, buildCpal } from './tables/colr'
 import { buildGlyf } from './tables/glyf'
@@ -18,18 +19,32 @@ import {
 import { toWoff } from './woff'
 
 export type FontFormat = 'ttf' | 'woff'
+export type { ColorTable } from './plan'
 
-const buildTables = (grids: Map<string, DotGrid>) => {
-  const plan = planFont(grids)
+type FontPlan = ReturnType<typeof planFont>
+type BuildOptions = { colorTable?: ColorTable }
+
+const colrTables = (plan: FontPlan) => {
+  if (plan.palette.length === 0) return []
+
+  return [
+    { tag: 'COLR', data: buildColr(plan.colorBases) },
+    { tag: 'CPAL', data: buildCpal(plan.palette) },
+  ]
+}
+
+const cbdtTables = async (plan: FontPlan) => {
+  const { cbdt, cblc } = await buildCbdt(plan.bitmaps)
+
+  return [
+    { tag: 'CBDT', data: cbdt },
+    { tag: 'CBLC', data: cblc },
+  ]
+}
+
+const buildTables = (plan: FontPlan, colorTables: Table[]) => {
   const { glyf, loca, bounds } = buildGlyf(plan.glyphs)
 
-  const colorTables =
-    plan.palette.length === 0
-      ? []
-      : [
-          { tag: 'COLR', data: buildColr(plan.colorBases) },
-          { tag: 'CPAL', data: buildCpal(plan.palette) },
-        ]
   const gsubTables =
     plan.ligatures.length === 0 ? [] : [{ tag: 'GSUB', data: buildGsub(plan.ligatures) }]
 
@@ -49,8 +64,12 @@ const buildTables = (grids: Map<string, DotGrid>) => {
   ]
 }
 
-export const buildFonts = async (grids: Map<string, DotGrid>) => {
-  const sfnt = assembleSfnt(buildTables(grids))
+export const buildFonts = async (grids: Map<string, DotGrid>, options: BuildOptions = {}) => {
+  const { colorTable = 'colr' } = options
+  const plan = planFont(grids, colorTable)
+  const colorTables = colorTable === 'colr' ? colrTables(plan) : await cbdtTables(plan)
+
+  const sfnt = assembleSfnt(buildTables(plan, colorTables))
   const woff = await toWoff(sfnt)
 
   return { ttf: sfnt.font, woff }
