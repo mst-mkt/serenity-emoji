@@ -25,6 +25,22 @@ export const concat = (parts: Uint8Array[]) => {
   return merged
 }
 
+export const u8 = (value: number) => {
+  if (!Number.isInteger(value) || value < 0 || value > 0xff) {
+    throw new Error(`u8 out of range: ${value}`)
+  }
+
+  return Uint8Array.from([value])
+}
+
+export const i8 = (value: number) => {
+  if (!Number.isInteger(value) || value < -0x80 || value > 0x7f) {
+    throw new Error(`i8 out of range: ${value}`)
+  }
+
+  return u8(value < 0 ? value + 0x100 : value)
+}
+
 export const u16 = (value: number) => {
   if (!Number.isInteger(value) || value < 0 || value > 0xffff) {
     throw new Error(`u16 out of range: ${value}`)
