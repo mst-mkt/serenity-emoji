@@ -1,6 +1,6 @@
 import { isDigit, isHexChar } from '@serenity-emoji/lib/chars'
 
-import { type FontFormat } from '../font/build'
+import { type FontFormat } from '../build'
 
 export type FontFile = { subset: string; digest: string | null; format: FontFormat }
 

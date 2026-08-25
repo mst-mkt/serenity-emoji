@@ -1,8 +1,7 @@
+import type { FontFormat } from '@serenity-emoji/font/build'
+import type { SubsetEntry } from '@serenity-emoji/font/webfont/subsets'
 import { sha256Hex } from '@serenity-emoji/lib/digest'
 import { env } from 'cloudflare:workers'
-
-import type { FontFormat } from '../domain/font/build'
-import type { SubsetEntry } from '../domain/webfont/subsets'
 
 const latestKeyOf = (subset: string, format: FontFormat) =>
   `font/serenity-emoji.${subset}.${format}`

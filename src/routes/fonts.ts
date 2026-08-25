@@ -1,11 +1,11 @@
 import { sValidator } from '@hono/standard-validator'
+import { toFontFaceCss } from '@serenity-emoji/font/webfont/css'
+import { type FontFile, parseFontFile } from '@serenity-emoji/font/webfont/file-name'
+import { ManifestSchema } from '@serenity-emoji/font/webfont/subsets'
 import { Hono } from 'hono'
 import * as v from 'valibot'
 
 import type { AppEnv } from '../bindings'
-import { toFontFaceCss } from '../domain/webfont/css'
-import { type FontFile, parseFontFile } from '../domain/webfont/file-name'
-import { ManifestSchema } from '../domain/webfont/subsets'
 import { buildRangeFont, buildTextFont } from '../fonts/build-fonts'
 import {
   FONT_CONTENT_TYPES,

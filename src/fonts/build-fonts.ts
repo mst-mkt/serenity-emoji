@@ -1,17 +1,17 @@
 import { textCodePoints } from '@serenity-emoji/emoji'
-import { type DotGrid } from '@serenity-emoji/image/dot-grid'
-import { sha256Hex } from '@serenity-emoji/lib/digest'
-
-import { buildFonts, type FontFormat } from '../domain/font/build'
-import { type FontFile } from '../domain/webfont/file-name'
-import { parseRange } from '../domain/webfont/range'
+import { buildFonts, type FontFormat } from '@serenity-emoji/font/build'
+import { type FontFile } from '@serenity-emoji/font/webfont/file-name'
+import { parseRange } from '@serenity-emoji/font/webfont/range'
 import {
   FULL_SUBSET,
   manifestOf,
   selectByCodePoints,
   selectByRange,
   splitBySubset,
-} from '../domain/webfont/subsets'
+} from '@serenity-emoji/font/webfont/subsets'
+import { type DotGrid } from '@serenity-emoji/image/dot-grid'
+import { sha256Hex } from '@serenity-emoji/lib/digest'
+
 import { getFontLatest, putFont, putFontBuilt, putFontManifest } from '../storage/fonts'
 import { getAllGrids } from '../storage/grids'
 

@@ -1,0 +1,23 @@
+{
+  "name": "@serenity-emoji/font",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./build": "./src/build.ts",
+    "./webfont/css": "./src/webfont/css.ts",
+    "./webfont/file-name": "./src/webfont/file-name.ts",
+    "./webfont/range": "./src/webfont/range.ts",
+    "./webfont/subsets": "./src/webfont/subsets.ts"
+  },
+  "dependencies": {
+    "@serenity-emoji/emoji": "workspace:*",
+    "@serenity-emoji/image": "workspace:*",
+    "@serenity-emoji/lib": "workspace:*",
+    "valibot": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "vite-plus": "catalog:"
+  }
+}

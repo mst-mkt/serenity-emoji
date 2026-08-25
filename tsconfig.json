@@ -9,5 +9,5 @@
     "skipLibCheck": true,
     "types": ["./cloudflare-env.d.ts"]
   },
-  "exclude": ["node_modules", "scripts"]
+  "exclude": ["node_modules", "packages/font/scripts"]
 }

@@ -41,6 +41,9 @@ importers:
       '@serenity-emoji/emoji':
         specifier: workspace:*
         version: link:packages/emoji
+      '@serenity-emoji/font':
+        specifier: workspace:*
+        version: link:packages/font
       '@serenity-emoji/image':
         specifier: workspace:*
         version: link:packages/image
@@ -75,6 +78,28 @@ importers:
       '@serenity-emoji/lib':
         specifier: workspace:*
         version: link:../lib
+
+  packages/font:
+    dependencies:
+      '@serenity-emoji/emoji':
+        specifier: workspace:*
+        version: link:../emoji
+      '@serenity-emoji/image':
+        specifier: workspace:*
+        version: link:../image
+      '@serenity-emoji/lib':
+        specifier: workspace:*
+        version: link:../lib
+      valibot:
+        specifier: 'catalog:'
+        version: 1.4.2(typescript@7.0.2)
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.13.3
+      vite-plus:
+        specifier: 'catalog:'
+        version: 0.2.9(@types/node@24.13.3)(esbuild@0.28.1)(typescript@7.0.2)(vite@8.0.16(@types/node@24.13.3)(esbuild@0.28.1))
 
   packages/image:
     dependencies:

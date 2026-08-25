@@ -26,7 +26,7 @@ export default defineConfig({
   test: {
     include: [
       './src/**/*.test.{ts,tsx}',
-      './scripts/**/*.test.{ts,tsx}',
+      './packages/font/scripts/**/*.test.{ts,tsx}',
       './packages/*/src/**/*.test.{ts,tsx}',
     ],
   },

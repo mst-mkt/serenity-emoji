@@ -9,6 +9,7 @@
   "dependencies": {
     "@hono/standard-validator": "catalog:",
     "@serenity-emoji/emoji": "workspace:*",
+    "@serenity-emoji/font": "workspace:*",
     "@serenity-emoji/image": "workspace:*",
     "@serenity-emoji/lib": "workspace:*",
     "hono": "catalog:",
