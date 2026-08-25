@@ -3,10 +3,18 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nix-vite-plus = {
+      url = "github:ryoppippi/nix-vite-plus";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
-    { nixpkgs, ... }:
+    {
+      nixpkgs,
+      nix-vite-plus,
+      ...
+    }:
     let
       systems = [
         "x86_64-linux"
@@ -14,22 +22,28 @@
         "x86_64-darwin"
         "aarch64-darwin"
       ];
-      forAllSystems = f: nixpkgs.lib.genAttrs systems (system: f nixpkgs.legacyPackages.${system});
+      forAllSystems = nixpkgs.lib.genAttrs systems;
     in
     {
-      devShells = forAllSystems (pkgs: {
-        default = pkgs.mkShell {
-          packages = with pkgs; [
-            nodejs-slim_24
-            pnpm
-          ];
-
-          shellHook = ''
-            export SSL_CERT_FILE="${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
-            export NIX_SSL_CERT_FILE="$SSL_CERT_FILE"
-            echo "node $(node --version), pnpm $(pnpm --version)"
-          '';
-        };
-      });
+      devShells = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        {
+          default = pkgs.mkShell {
+            packages = [
+              pkgs.nodejs-slim_24
+              pkgs.pnpm
+              nix-vite-plus.packages.${system}.vp
+            ];
+            shellHook = ''
+              export SSL_CERT_FILE="${pkgs.cacert}/etc/ssl/certs/ca-bundle.crt"
+              export NIX_SSL_CERT_FILE="$SSL_CERT_FILE"
+              echo "node $(node --version), pnpm $(pnpm --version)"
+            '';
+          };
+        }
+      );
     };
 }
