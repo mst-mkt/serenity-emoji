@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { rgba } from '../test/fixtures'
 import { toRuns } from './dot-grid'
+import { rgba } from './test/fixtures'
 
 describe('toRuns', () => {
   it('merges adjacent pixels of the same color', () => {

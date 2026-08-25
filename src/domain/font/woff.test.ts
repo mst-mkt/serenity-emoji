@@ -1,6 +1,6 @@
+import { inflate, tagAt, u16At, u32At } from '@serenity-emoji/image/test/fixtures'
 import { describe, expect, it } from 'vite-plus/test'
 
-import { inflate, tagAt, u16At, u32At } from '../../test/fixtures'
 import { assembleSfnt, toSfnt } from './sfnt'
 import { toWoff } from './woff'
 import { checksum } from './write'

@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { chunk, deflate, fromBase64, HEART, ihdr, png, rgba } from '../../../test/fixtures'
+import { chunk, deflate, fromBase64, HEART, ihdr, png, rgba } from '../test/fixtures'
 import { decodePng } from './decode'
 
 const heart = fromBase64(HEART)

@@ -1,20 +1,24 @@
 import { sValidator } from '@hono/standard-validator'
 import { toStem } from '@serenity-emoji/emoji'
+import {
+  COLOR_FORMATS,
+  COLOR_STRING_FORMATS,
+  formatColor,
+} from '@serenity-emoji/image/color/format'
+import { toAnsi } from '@serenity-emoji/image/render/ansi'
+import { toCsv } from '@serenity-emoji/image/render/csv'
+import { toIco } from '@serenity-emoji/image/render/ico'
+import { toIterm } from '@serenity-emoji/image/render/iterm'
+import { toKitty } from '@serenity-emoji/image/render/kitty'
+import { toPng } from '@serenity-emoji/image/render/png'
+import { toSixel } from '@serenity-emoji/image/render/sixel'
+import { toSvg } from '@serenity-emoji/image/render/svg'
+import { scaleToFit } from '@serenity-emoji/image/scale'
+import { toSquare } from '@serenity-emoji/image/square'
 import { Hono } from 'hono'
 import * as v from 'valibot'
 
 import type { AppEnv } from '../bindings'
-import { COLOR_FORMATS, COLOR_STRING_FORMATS, formatColor } from '../domain/color/format'
-import { scaleToFit } from '../domain/image/scale'
-import { toSquare } from '../domain/image/square'
-import { toAnsi } from '../domain/render/ansi'
-import { toCsv } from '../domain/render/csv'
-import { toIco } from '../domain/render/ico'
-import { toIterm } from '../domain/render/iterm'
-import { toKitty } from '../domain/render/kitty'
-import { toPng } from '../domain/render/png'
-import { toSixel } from '../domain/render/sixel'
-import { toSvg } from '../domain/render/svg'
 import { findGrid } from '../storage/grids'
 import { licenseHeaderMiddleware } from './middlewares/license'
 

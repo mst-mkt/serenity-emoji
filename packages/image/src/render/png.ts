@@ -2,9 +2,9 @@ import { pngTextRecords } from '@serenity-emoji/emoji/attribution'
 import { concat, crc32, u32 } from '@serenity-emoji/lib/bytes'
 import { deflate } from '@serenity-emoji/lib/zlib'
 
+import { SIGNATURE } from '../decode/chunks'
 import type { DotGrid, Rgba } from '../dot-grid'
-import { SIGNATURE } from '../image/decode/chunks'
-import { dimensionsOf, scaleToFit, type SizeOptions } from '../image/scale'
+import { dimensionsOf, scaleToFit, type SizeOptions } from '../scale'
 
 const chunk = (type: string, data: Uint8Array) => {
   const body = concat([new TextEncoder().encode(type), data])

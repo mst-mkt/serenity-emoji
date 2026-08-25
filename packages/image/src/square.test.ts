@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { rgba } from '../../test/fixtures'
 import { toSquare } from './square'
+import { rgba } from './test/fixtures'
 
 const CLEAR = rgba(0, 0, 0, 0)
 

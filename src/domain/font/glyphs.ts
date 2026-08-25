@@ -1,7 +1,6 @@
+import { type DotGrid, type Rgba, type Run, toRuns } from '@serenity-emoji/image/dot-grid'
+import { dimensionsOf } from '@serenity-emoji/image/scale'
 import { hex } from '@serenity-emoji/lib/bytes'
-
-import { type DotGrid, type Rgba, type Run, toRuns } from '../dot-grid'
-import { dimensionsOf } from '../image/scale'
 
 export type Rect = { xMin: number; yMin: number; xMax: number; yMax: number }
 export type ColorLayer = { color: Rgba; rects: Rect[] }

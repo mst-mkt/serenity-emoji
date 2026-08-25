@@ -1,4 +1,4 @@
-import type { DotGrid, Rgba } from '../dot-grid'
+import type { DotGrid, Rgba } from './dot-grid'
 import { dimensionsOf } from './scale'
 
 const TRANSPARENT: Rgba = { r: 0, g: 0, b: 0, a: 0 }

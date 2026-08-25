@@ -1,8 +1,7 @@
 import { withoutVariationSelectors } from '@serenity-emoji/emoji'
+import type { DotGrid } from '@serenity-emoji/image/dot-grid'
 import { chunk } from '@serenity-emoji/lib/chunk'
 import { env } from 'cloudflare:workers'
-
-import type { DotGrid } from '../domain/dot-grid'
 
 type Metadata = { sha: string }
 export type StoredEntry = { name: string; sha: string }

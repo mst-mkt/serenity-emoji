@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { rgba } from '../../../test/fixtures'
+import { rgba } from '../test/fixtures'
 import { toPixels } from './pixels'
 
 const meta = { width: 2, depth: 8, channels: 4, palette: undefined, transparencyKey: undefined }

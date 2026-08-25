@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { rgba } from '../../test/fixtures'
+import { rgba } from '../test/fixtures'
 import { toHsl, toHwb, toLab, toLch, toOklab, toOklch } from './convert'
 
 const RED = rgba(255, 0, 0)

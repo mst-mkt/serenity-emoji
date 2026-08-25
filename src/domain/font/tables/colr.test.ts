@@ -1,6 +1,6 @@
+import { rgba } from '@serenity-emoji/image/test/fixtures'
 import { describe, expect, it } from 'vite-plus/test'
 
-import { rgba } from '../../../test/fixtures'
 import { buildColr, buildCpal } from './colr'
 
 describe('buildColr', () => {

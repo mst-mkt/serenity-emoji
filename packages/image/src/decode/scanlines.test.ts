@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { deflate } from '../../../test/fixtures'
+import { deflate } from '../test/fixtures'
 import { toScanlines } from './scanlines'
 
 const meta = { width: 2, height: 2, depth: 8, channels: 1 }

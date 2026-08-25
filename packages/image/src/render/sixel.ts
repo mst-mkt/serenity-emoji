@@ -1,5 +1,5 @@
 import type { DotGrid, Rgba } from '../dot-grid'
-import { dimensionsOf } from '../image/scale'
+import { dimensionsOf } from '../scale'
 
 // sixel carries no alpha, so binarize: pixels below this opacity are not drawn
 const ALPHA_THRESHOLD = 64

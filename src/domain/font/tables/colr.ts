@@ -1,6 +1,6 @@
+import type { Rgba } from '@serenity-emoji/image/dot-grid'
 import { concat, u16, u32 } from '@serenity-emoji/lib/bytes'
 
-import type { Rgba } from '../../dot-grid'
 import type { ColorBase } from '../plan'
 import { prefixSums, struct, withSections } from '../write'
 

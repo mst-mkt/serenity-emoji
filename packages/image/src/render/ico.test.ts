@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { rgba } from '../../test/fixtures'
+import { rgba } from '../test/fixtures'
 import { toIco } from './ico'
 import { toPng } from './png'
 

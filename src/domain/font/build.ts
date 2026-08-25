@@ -1,4 +1,5 @@
-import type { DotGrid } from '../dot-grid'
+import type { DotGrid } from '@serenity-emoji/image/dot-grid'
+
 import { planFont } from './plan'
 import { assembleSfnt } from './sfnt'
 import { buildCmap } from './tables/cmap'

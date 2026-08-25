@@ -1,4 +1,4 @@
-import type { Rgba } from '../../dot-grid'
+import type { Rgba } from '../dot-grid'
 
 type PixelMeta = {
   width: number

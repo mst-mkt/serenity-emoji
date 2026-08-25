@@ -1,7 +1,7 @@
 import { crc32 } from '@serenity-emoji/lib/bytes'
 import { deflate as deflateBytes } from '@serenity-emoji/lib/zlib'
 
-import { SIGNATURE } from '../domain/image/decode/chunks'
+import { SIGNATURE } from '../decode/chunks'
 
 const u32 = (n: number) => [(n >>> 24) & 255, (n >>> 16) & 255, (n >>> 8) & 255, n & 255]
 

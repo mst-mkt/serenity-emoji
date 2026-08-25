@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { rgba } from '../../test/fixtures'
+import { rgba } from '../test/fixtures'
 import { formatColor } from './format'
 
 const RED_HALF = rgba(255, 0, 0, 128)

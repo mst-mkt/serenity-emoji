@@ -1,7 +1,7 @@
+import type { DotGrid } from '@serenity-emoji/image/dot-grid'
+import { rgba } from '@serenity-emoji/image/test/fixtures'
 import { describe, expect, it } from 'vite-plus/test'
 
-import { rgba } from '../../test/fixtures'
-import type { DotGrid } from '../dot-grid'
 import { planFont } from './plan'
 
 const RED = rgba(255, 0, 0)

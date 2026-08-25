@@ -1,6 +1,6 @@
+import { tagAt, u16At } from '@serenity-emoji/image/test/fixtures'
 import { describe, expect, it } from 'vite-plus/test'
 
-import { tagAt, u16At } from '../../../test/fixtures'
 import { buildGsub } from './gsub'
 
 describe('buildGsub', () => {

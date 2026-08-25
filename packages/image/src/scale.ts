@@ -1,4 +1,4 @@
-import type { DotGrid, Rgba } from '../dot-grid'
+import type { DotGrid, Rgba } from './dot-grid'
 
 // size scales the longer side, keeping aspect ratio
 export type SizeOptions = { size?: number }

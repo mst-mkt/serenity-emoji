@@ -1,7 +1,7 @@
 import { base64 } from '@serenity-emoji/lib/base64'
 import { describe, expect, it } from 'vite-plus/test'
 
-import { rgba } from '../../test/fixtures'
+import { rgba } from '../test/fixtures'
 import { toIterm } from './iterm'
 import { toPng } from './png'
 

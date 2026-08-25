@@ -41,6 +41,9 @@ importers:
       '@serenity-emoji/emoji':
         specifier: workspace:*
         version: link:packages/emoji
+      '@serenity-emoji/image':
+        specifier: workspace:*
+        version: link:packages/image
       '@serenity-emoji/lib':
         specifier: workspace:*
         version: link:packages/lib
@@ -69,6 +72,15 @@ importers:
 
   packages/emoji:
     dependencies:
+      '@serenity-emoji/lib':
+        specifier: workspace:*
+        version: link:../lib
+
+  packages/image:
+    dependencies:
+      '@serenity-emoji/emoji':
+        specifier: workspace:*
+        version: link:../emoji
       '@serenity-emoji/lib':
         specifier: workspace:*
         version: link:../lib

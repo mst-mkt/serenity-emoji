@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { chunk, fromBase64, HEART, ihdr, png } from '../../../test/fixtures'
+import { chunk, fromBase64, HEART, ihdr, png } from '../test/fixtures'
 import { parseChunks, SIGNATURE } from './chunks'
 
 const heart = fromBase64(HEART)
