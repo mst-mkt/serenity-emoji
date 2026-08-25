@@ -19,7 +19,7 @@ import {
 import { toWoff } from './woff'
 
 export type FontFormat = 'ttf' | 'woff'
-export type { ColorTable } from './plan'
+export { COLOR_TABLES, type ColorTable } from './plan'
 
 type FontPlan = ReturnType<typeof planFont>
 type BuildOptions = { colorTable?: ColorTable }

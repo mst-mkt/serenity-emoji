@@ -8,7 +8,8 @@ export type PlannedGlyph = { advance: number; rects: Rect[] }
 export type Ligature = { components: number[]; glyph: number }
 export type ColorBase = { glyph: number; layers: { glyph: number; palette: number }[] }
 
-export type ColorTable = 'colr' | 'cbdt'
+export const COLOR_TABLES = ['colr', 'cbdt'] as const
+export type ColorTable = (typeof COLOR_TABLES)[number]
 
 type Entry = { stem: string; codePoints: number[]; glyph: Glyph; grid: DotGrid }
 type Sequence = { codePoints: number[]; glyph: number }

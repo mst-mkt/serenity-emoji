@@ -2,7 +2,12 @@ import { mkdir, readdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
 import { ARTWORK_MAX_DIMENSION, stemOfEmojiFile } from '@serenity-emoji/emoji'
-import { buildFonts } from '@serenity-emoji/font/build'
+import {
+  buildFonts,
+  COLOR_TABLES,
+  type ColorTable,
+  type FontFormat,
+} from '@serenity-emoji/font/build'
 import { formatFontFile } from '@serenity-emoji/font/webfont/file-name'
 import { planSubsets } from '@serenity-emoji/font/webfont/subsets'
 import { decodePng } from '@serenity-emoji/image/decode'
@@ -46,13 +51,22 @@ const readGrids = async (emojiDir: string) => {
   return new Map(pairs)
 }
 
-const writeSubset = async (outDir: string, subset: string, grids: Map<string, DotGrid>) => {
-  const fonts = await buildFonts(grids)
+const writeSubset = async (
+  outDir: string,
+  subset: string,
+  grids: Map<string, DotGrid>,
+  colorTable: ColorTable,
+) => {
+  const fonts = await buildFonts(grids, { colorTable })
 
-  await Promise.all([
-    writeFile(join(outDir, formatFontFile({ subset, digest: null, format: 'ttf' })), fonts.ttf),
-    writeFile(join(outDir, formatFontFile({ subset, digest: null, format: 'woff' })), fonts.woff),
-  ])
+  // woff is only served on the web, which uses the colr flavor
+  const formats: FontFormat[] = colorTable === 'colr' ? ['ttf', 'woff'] : ['ttf']
+
+  await Promise.all(
+    formats.map((format) =>
+      writeFile(join(outDir, formatFontFile({ subset, digest: null, format })), fonts[format]),
+    ),
+  )
 }
 
 export const buildCommand = define({
@@ -67,9 +81,16 @@ export const buildCommand = define({
       type: 'positional',
       description: 'Directory to write the fonts and manifest into',
     },
+    colorTable: {
+      type: 'enum',
+      choices: COLOR_TABLES,
+      default: 'colr',
+      toKebab: true,
+      description: 'Color glyph table: colr vector layers or cbdt pixel bitmaps',
+    },
   },
   run: async (ctx) => {
-    const { emojiDir, outDir } = ctx.values
+    const { emojiDir, outDir, colorTable } = ctx.values
 
     const grids = await readGrids(emojiDir)
     if (grids.size === 0) {
@@ -81,7 +102,9 @@ export const buildCommand = define({
     try {
       await mkdir(outDir, { recursive: true })
       await Promise.all(
-        [...subsets].map(([subset, subsetGrids]) => writeSubset(outDir, subset, subsetGrids)),
+        [...subsets].map(([subset, subsetGrids]) =>
+          writeSubset(outDir, subset, subsetGrids, colorTable),
+        ),
       )
       await writeFile(join(outDir, 'manifest.json'), JSON.stringify(manifest))
     } catch (cause) {
