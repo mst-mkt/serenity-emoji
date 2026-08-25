@@ -76,6 +76,17 @@ describe('toPng', () => {
     expect(text).toContain('License\0BSD-2-Clause')
   })
 
+  it('omits the metadata chunks when disabled', async () => {
+    const grid = [[rgba(255, 0, 0)]]
+
+    const png = await toPng(grid, { metadata: false })
+    const text = Array.from(png, (byte) => String.fromCharCode(byte)).join('')
+
+    expect(text).not.toContain('Copyright\0Copyright (c) the SerenityOS developers')
+    expect(text).not.toContain('License\0BSD-2-Clause')
+    expect(await decodePng(png)).toEqual(grid)
+  })
+
   it('keeps round-tripping despite the added metadata', async () => {
     const grid = [[rgba(1, 2, 3), rgba(4, 5, 6)]]
 
