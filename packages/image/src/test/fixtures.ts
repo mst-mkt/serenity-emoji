@@ -15,7 +15,7 @@ export const rgba = (r: number, g: number, b: number, a = 255) => ({ r, g, b, a 
 
 export const deflate = (data: number[]) => deflateBytes(Uint8Array.from(data))
 
-export const inflate = async (data: Uint8Array) => {
+export const inflate = async (data: Uint8Array<ArrayBuffer>) => {
   const stream = new Blob([data]).stream().pipeThrough(new DecompressionStream('deflate'))
   const original = await new Response(stream).arrayBuffer()
 

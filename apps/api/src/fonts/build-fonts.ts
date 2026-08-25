@@ -58,7 +58,7 @@ export const buildRangeFont = async (parsed: FontFile) => {
 
 const textSubset = async (codePoints: Set<number>) => {
   const sorted = [...codePoints].toSorted((a, b) => a - b)
-  const bytes = new TextEncoder().encode(sorted.join(','))
+  const bytes = new Uint8Array(new TextEncoder().encode(sorted.join(',')))
   const hex = await sha256Hex(bytes)
 
   return `text-${hex.slice(0, 16)}`

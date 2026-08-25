@@ -3,7 +3,7 @@ import { concat } from './bytes'
 const EMPTY = new Uint8Array(0)
 
 // zlib deflate via web standard API (works on both Workers and Node)
-export const deflate = async (data: Uint8Array) => {
+export const deflate = async (data: Uint8Array<ArrayBuffer>) => {
   const stream = new Blob([data]).stream().pipeThrough(new CompressionStream('deflate'))
   const compressed = await new Response(stream).arrayBuffer()
 

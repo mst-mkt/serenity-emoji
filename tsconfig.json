@@ -1,13 +1,4 @@
 {
-  "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
-    "lib": ["esnext"],
-    "moduleResolution": "bundler",
-    "strict": true,
-    "noEmit": true,
-    "skipLibCheck": true,
-    "types": ["./apps/api/cloudflare-env.d.ts"]
-  },
-  "exclude": ["node_modules", "packages/font/scripts"]
+  "extends": "./tsconfig.base.json",
+  "include": ["vite.config.ts"]
 }

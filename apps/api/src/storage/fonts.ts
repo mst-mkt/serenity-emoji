@@ -23,7 +23,11 @@ export const getFontLatest = (subset: string, format: FontFormat) => {
   return env.R2.get(latestKeyOf(subset, format))
 }
 
-export const putFont = async (font: Uint8Array, subset: string, format: FontFormat) => {
+export const putFont = async (
+  font: Uint8Array<ArrayBuffer>,
+  subset: string,
+  format: FontFormat,
+) => {
   const hex = await sha256Hex(font)
   const digest = hex.slice(0, 16)
   const contentType = FONT_CONTENT_TYPES[format]
