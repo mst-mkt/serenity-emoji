@@ -1,3 +1,4 @@
+import { formatFontFile } from './file-name'
 import type { SubsetEntry } from './subsets'
 
 type FontSource = {
@@ -20,7 +21,7 @@ const cssRule = (selector: string, declarations: string[]) => {
 const fontFace = ({ subset, range }: SubsetEntry, baseUrl: string) => {
   const src = sources([
     {
-      url: `${baseUrl}/font/serenity-emoji.${subset}.woff`,
+      url: `${baseUrl}/font/${formatFontFile({ subset, digest: null, format: 'woff' })}`,
       format: 'woff',
     },
   ])

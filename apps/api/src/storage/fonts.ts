@@ -1,12 +1,13 @@
 import type { FontFormat } from '@serenity-emoji/font/build'
+import { formatFontFile } from '@serenity-emoji/font/webfont/file-name'
 import type { SubsetEntry } from '@serenity-emoji/font/webfont/subsets'
 import { sha256Hex } from '@serenity-emoji/lib/digest'
 import { env } from 'cloudflare:workers'
 
 const latestKeyOf = (subset: string, format: FontFormat) =>
-  `font/serenity-emoji.${subset}.${format}`
+  `font/${formatFontFile({ subset, digest: null, format })}`
 const keyOf = (subset: string, digest: string, format: FontFormat) =>
-  `font/serenity-emoji.${subset}.${digest}.${format}`
+  `font/${formatFontFile({ subset, digest, format })}`
 const fileKeyOf = (file: string) => `font/${file}`
 
 export const FONT_CONTENT_TYPES = {

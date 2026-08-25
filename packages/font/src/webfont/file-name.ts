@@ -4,6 +4,14 @@ import { type FontFormat } from '../build'
 
 export type FontFile = { subset: string; digest: string | null; format: FontFormat }
 
+const FONT_FILE_NAME = 'serenity-emoji'
+
+export const formatFontFile = ({ subset, digest, format }: FontFile) => {
+  const segments = [FONT_FILE_NAME, subset, ...(digest === null ? [] : [digest]), format]
+
+  return segments.join('.')
+}
+
 const isSubsetChar = (char: string) => (char >= 'a' && char <= 'z') || isDigit(char) || char === '-'
 const isSubset = (value: string) => value.length > 0 && value.split('').every(isSubsetChar)
 const isDigest = (value: string) => value.length === 16 && value.split('').every(isHexChar)
@@ -15,7 +23,7 @@ export const parseFontFile = (file: string) => {
   const [name, subset] = parts
   const extension = parts.at(-1)
 
-  if (name !== 'serenity-emoji' || extension === undefined || !isFormat(extension)) return null
+  if (name !== FONT_FILE_NAME || extension === undefined || !isFormat(extension)) return null
   if (subset === undefined || !isSubset(subset)) return null
 
   if (parts.length === 3) return { subset, digest: null, format: extension }

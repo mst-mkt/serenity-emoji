@@ -1,6 +1,32 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { parseFontFile } from './file-name'
+import { formatFontFile, parseFontFile } from './file-name'
+
+describe('formatFontFile', () => {
+  it('formats a latest file name', () => {
+    const file = { subset: 'full', digest: null, format: 'ttf' } as const
+
+    const name = formatFontFile(file)
+
+    expect(name).toBe('serenity-emoji.full.ttf')
+  })
+
+  it('formats a digest file name', () => {
+    const file = { subset: 'full', digest: '0123456789abcdef', format: 'woff' } as const
+
+    const name = formatFontFile(file)
+
+    expect(name).toBe('serenity-emoji.full.0123456789abcdef.woff')
+  })
+
+  it('round-trips through parseFontFile', () => {
+    const file = { subset: 'smileys-emotion', digest: '0123456789abcdef', format: 'ttf' } as const
+
+    const parsed = parseFontFile(formatFontFile(file))
+
+    expect(parsed).toEqual(file)
+  })
+})
 
 describe('parseFontFile', () => {
   it('parses a latest file name', () => {
