@@ -4,15 +4,15 @@ export default defineConfig({
   run: {
     tasks: {
       dev: {
-        command: 'wrangler dev',
+        command: 'vp run @serenity-emoji/api#dev',
         cache: false,
       },
       'gen:types': {
-        command: 'wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts',
+        command: 'vp run @serenity-emoji/api#gen:types',
         cache: false,
       },
       deploy: {
-        command: 'wrangler deploy',
+        command: 'vp run @serenity-emoji/api#deploy',
         cache: false,
       },
       'test:ci': {
@@ -25,13 +25,13 @@ export default defineConfig({
   },
   test: {
     include: [
-      './src/**/*.test.{ts,tsx}',
-      './packages/font/scripts/**/*.test.{ts,tsx}',
       './packages/*/src/**/*.test.{ts,tsx}',
+      './packages/font/scripts/**/*.test.{ts,tsx}',
+      './apps/*/src/**/*.test.{ts,tsx}',
     ],
   },
   fmt: {
-    ignorePatterns: ['cloudflare-env.d.ts'],
+    ignorePatterns: ['apps/api/cloudflare-env.d.ts'],
     semi: false,
     singleQuote: true,
     sortImports: {},
@@ -40,7 +40,7 @@ export default defineConfig({
     },
   },
   lint: {
-    ignorePatterns: ['cloudflare-env.d.ts'],
+    ignorePatterns: ['apps/api/cloudflare-env.d.ts'],
     options: {
       typeAware: true,
       typeCheck: true,

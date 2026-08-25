@@ -1,0 +1,24 @@
+{
+  "name": "@serenity-emoji/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "gen:types": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts"
+  },
+  "dependencies": {
+    "@hono/standard-validator": "catalog:",
+    "@serenity-emoji/emoji": "workspace:*",
+    "@serenity-emoji/font": "workspace:*",
+    "@serenity-emoji/image": "workspace:*",
+    "@serenity-emoji/lib": "workspace:*",
+    "hono": "catalog:",
+    "kuron": "catalog:",
+    "valibot": "catalog:"
+  },
+  "devDependencies": {
+    "wrangler": "catalog:"
+  }
+}

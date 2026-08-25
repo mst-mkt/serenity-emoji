@@ -7,7 +7,7 @@
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true,
-    "types": ["./cloudflare-env.d.ts"]
+    "types": ["./apps/api/cloudflare-env.d.ts"]
   },
   "exclude": ["node_modules", "packages/font/scripts"]
 }
