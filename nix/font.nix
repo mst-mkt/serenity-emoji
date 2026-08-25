@@ -29,7 +29,7 @@ stdenvNoCC.mkDerivation {
   buildPhase = ''
     runHook preBuild
 
-    serenity-emoji build $src fonts
+    serenity-emoji build --color-table cbdt $src fonts
 
     runHook postBuild
   '';
