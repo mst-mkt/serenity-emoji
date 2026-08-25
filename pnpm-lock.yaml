@@ -96,6 +96,9 @@ importers:
       '@serenity-emoji/image':
         specifier: workspace:*
         version: link:../../packages/image
+      '@serenity-emoji/lib':
+        specifier: workspace:*
+        version: link:../../packages/lib
       emoji-name-map:
         specifier: 'catalog:'
         version: 2.0.3

@@ -11,6 +11,7 @@
     "@serenity-emoji/emoji": "workspace:*",
     "@serenity-emoji/font": "workspace:*",
     "@serenity-emoji/image": "workspace:*",
+    "@serenity-emoji/lib": "workspace:*",
     "emoji-name-map": "catalog:",
     "gunshi": "catalog:",
     "valibot": "catalog:"

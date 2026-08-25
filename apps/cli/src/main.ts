@@ -1,5 +1,6 @@
 import { define } from 'gunshi'
 
+import { buildCommand } from './commands/build'
 import { renderCommand } from './commands/render'
 import { runCli } from './run'
 
@@ -9,4 +10,6 @@ const entry = define({
   },
 })
 
-await runCli(process.argv.slice(2), entry, { subCommands: { render: renderCommand } })
+await runCli(process.argv.slice(2), entry, {
+  subCommands: { build: buildCommand, render: renderCommand },
+})
