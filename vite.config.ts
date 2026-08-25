@@ -15,6 +15,14 @@ export default defineConfig({
         command: 'vp run @serenity-emoji/api#deploy',
         cache: false,
       },
+      cli: {
+        command: 'vp run @serenity-emoji/cli#cli',
+        cache: false,
+      },
+      'build:cli': {
+        command: 'vp run @serenity-emoji/cli#build',
+        cache: false,
+      },
       'test:ci': {
         command: 'vp test run --reporter=default --reporter=github-actions',
       },
