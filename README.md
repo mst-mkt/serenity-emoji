@@ -231,6 +231,28 @@ serenity-emoji build ~/serenity/Base/res/emoji ./fonts
 
 The output is one `serenity-emoji.{subset}.ttf` and `.woff` per subset, plus a `manifest.json` pairing each subset with its `unicode-range`.
 
+## System Font
+
+The font as a Nix package, to install as a system font.
+
+### NixOS
+
+```nix
+{
+  fonts.packages = [ inputs.serenity-emoji.packages.${pkgs.system}.font ];
+  fonts.fontconfig.defaultFonts.emoji = [ "Serenity Emoji" ];
+}
+```
+
+### Home Manager
+
+```nix
+{
+  home.packages = [ inputs.serenity-emoji.packages.${pkgs.system}.font ];
+  fonts.fontconfig.defaultFonts.emoji = [ "Serenity Emoji" ];
+}
+```
+
 ## License
 
 This project is [MIT](./LICENSE).
