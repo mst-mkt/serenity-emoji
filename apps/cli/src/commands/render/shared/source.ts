@@ -9,6 +9,8 @@ import {
 import { decodePng } from '@serenity-emoji/image/decode'
 import * as v from 'valibot'
 
+import { fail, reasonOf } from '../../../libs/fail'
+
 const API_BASE_URL = 'https://serenity.keito.dev'
 
 const rgbaSchema = v.object({ r: v.number(), g: v.number(), b: v.number(), a: v.number() })
@@ -18,9 +20,15 @@ const toEmoji = (stem: string) => String.fromCodePoint(...toCodePoints(stem))
 
 const fetchGrid = async (stem: string) => {
   const emoji = encodeURIComponent(toEmoji(stem))
-  const response = await fetch(`${API_BASE_URL}/${emoji}/json?format=object`)
+  const url = `${API_BASE_URL}/${emoji}/json?format=object`
+
+  const response = await fetch(url).catch((cause) => {
+    return fail(`failed to reach the api: ${reasonOf(cause)}`)
+  })
   if (response.status === 404) return null
-  if (!response.ok) throw new Error(`api request failed: ${response.status} ${response.statusText}`)
+  if (!response.ok) {
+    return fail(`api request failed: ${response.status} ${response.statusText}`)
+  }
 
   return v.parse(gridSchema, await response.json())
 }

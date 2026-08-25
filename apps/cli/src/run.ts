@@ -3,6 +3,7 @@ import { cli, isArgsValidationError, isCommandNotFoundError } from 'gunshi'
 import type { CliOptions, Command, DefaultGunshiParams, GunshiParams } from 'gunshi'
 
 import pkg from '../package.json' with { type: 'json' }
+import { fail } from './libs/fail'
 
 const isUsageFailure = (failure: unknown) => {
   return isArgsValidationError(failure) || isCommandNotFoundError(failure)
@@ -35,7 +36,6 @@ export const runCli = async <G extends GunshiParams = DefaultGunshiParams>(
     const failures = usageFailuresOf(error)
     if (failures === null) throw error
 
-    console.error(failures.map((failure) => failure.message).join('\n'))
-    process.exit(1)
+    return fail(failures.map((failure) => failure.message).join('\n'))
   }
 }

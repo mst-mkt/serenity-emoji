@@ -10,15 +10,10 @@ import type { DotGrid } from '@serenity-emoji/image/dot-grid'
 import { chunk } from '@serenity-emoji/lib/chunk'
 import { define } from 'gunshi'
 
+import { fail, reasonOf } from '../libs/fail'
+
 // stay well below common `ulimit -n` soft limits
 const OPEN_FILE_LIMIT = 64
-
-const fail = (message: string): never => {
-  console.error(message)
-  process.exit(1)
-}
-
-const reasonOf = (cause: unknown) => (cause instanceof Error ? cause.message : String(cause))
 
 const readGrid = async (emojiDir: string, file: string, stem: string) => {
   const bytes = await readFile(join(emojiDir, file)).catch((cause) => {
@@ -78,7 +73,7 @@ export const buildCommand = define({
 
     const grids = await readGrids(emojiDir)
     if (grids.size === 0) {
-      fail(`no emoji found in ${emojiDir}`)
+      return fail(`no emoji found in ${emojiDir}`)
     }
 
     const { subsets, manifest } = planSubsets(grids)
@@ -90,7 +85,7 @@ export const buildCommand = define({
       )
       await writeFile(join(outDir, 'manifest.json'), JSON.stringify(manifest))
     } catch (cause) {
-      fail(`failed to write into ${outDir}: ${reasonOf(cause)}`)
+      return fail(`failed to write into ${outDir}: ${reasonOf(cause)}`)
     }
 
     console.log(`built ${subsets.size} subsets from ${grids.size} emoji into ${outDir}`)
