@@ -1,0 +1,25 @@
+{
+  "name": "@serenity-emoji/cli",
+  "version": "0.0.0",
+  "private": true,
+  "bin": {
+    "serenity-emoji": "./dist/main.mjs"
+  },
+  "type": "module",
+  "scripts": {
+    "build": "vp pack"
+  },
+  "dependencies": {
+    "@gunshi/plugin-completion": "catalog:",
+    "@serenity-emoji/emoji": "workspace:*",
+    "@serenity-emoji/font": "workspace:*",
+    "@serenity-emoji/image": "workspace:*",
+    "@serenity-emoji/lib": "workspace:*",
+    "emoji-name-map": "catalog:",
+    "gunshi": "catalog:",
+    "valibot": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:"
+  }
+}
