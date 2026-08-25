@@ -44,6 +44,9 @@ importers:
 
   .:
     devDependencies:
+      '@serenity-emoji/cli':
+        specifier: workspace:*
+        version: link:apps/cli
       typescript:
         specifier: 'catalog:'
         version: 7.0.2
