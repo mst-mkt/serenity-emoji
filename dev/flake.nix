@@ -1,5 +1,5 @@
 {
-  description = "mst-mkt/serenity-emoji";
+  description = "mst-mkt/serenity-emoji development shell";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -33,7 +33,7 @@
           default = pkgs.mkShell {
             packages = [
               pkgs.nodejs-slim_24
-              pkgs.pnpm
+              pkgs.pnpm_11
               nix-vite-plus.packages.${system}.vp
             ];
             shellHook = ''
