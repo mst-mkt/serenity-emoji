@@ -1,4 +1,4 @@
-import { hasPrivateUse } from '@serenity-emoji/emoji'
+import { stemOfEmojiFile } from '@serenity-emoji/emoji'
 import { env } from 'cloudflare:workers'
 import * as v from 'valibot'
 
@@ -49,14 +49,10 @@ export const fetchEmojiTree = async (commit: string) => {
   if (data.truncated) throw new Error('github: emoji tree truncated')
 
   const entries = data.tree.flatMap((node) => {
-    if (node.type !== 'blob' || !node.path.startsWith('U+') || !node.path.endsWith('.png')) {
-      return []
-    }
+    if (node.type !== 'blob') return []
 
-    const stem = node.path.slice(0, -'.png'.length)
-    if (hasPrivateUse(stem)) return []
-
-    return [{ name: stem, sha: node.sha }]
+    const stem = stemOfEmojiFile(node.path)
+    return stem === null ? [] : [{ name: stem, sha: node.sha }]
   })
 
   return entries

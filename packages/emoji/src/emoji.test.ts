@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vite-plus/test'
 
 import {
   hasPrivateUse,
+  stemOfEmojiFile,
   textCodePoints,
   toCodePoints,
   toStem,
@@ -91,6 +92,40 @@ describe('hasPrivateUse', () => {
     const results = stems.map(hasPrivateUse)
 
     expect(results).toEqual([false, false, false])
+  })
+})
+
+describe('stemOfEmojiFile', () => {
+  it('extracts the stem from an emoji png file name', () => {
+    const fileName = 'U+1F600.png'
+
+    const stem = stemOfEmojiFile(fileName)
+
+    expect(stem).toBe('U+1F600')
+  })
+
+  it('extracts a sequence stem', () => {
+    const fileName = 'U+1F468_U+200D_U+1F469_U+200D_U+1F467.png'
+
+    const stem = stemOfEmojiFile(fileName)
+
+    expect(stem).toBe('U+1F468_U+200D_U+1F469_U+200D_U+1F467')
+  })
+
+  it('rejects files that are not emoji pngs', () => {
+    const fileNames = ['README.md', 'U+1F600.svg', 'emoji.png']
+
+    const stems = fileNames.map(stemOfEmojiFile)
+
+    expect(stems).toEqual([null, null, null])
+  })
+
+  it('rejects private use stems', () => {
+    const fileName = 'U+10CD60.png'
+
+    const stem = stemOfEmojiFile(fileName)
+
+    expect(stem).toBeNull()
   })
 })
 

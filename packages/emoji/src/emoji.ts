@@ -24,6 +24,14 @@ export const hasPrivateUse = (stem: string) => {
   return toCodePoints(stem).some(isPrivateUse)
 }
 
+// upstream emoji artwork ships as `<stem>.png`; private use glyphs are excluded from the set
+export const stemOfEmojiFile = (fileName: string) => {
+  if (!fileName.startsWith('U+') || !fileName.endsWith('.png')) return null
+
+  const stem = fileName.slice(0, -'.png'.length)
+  return hasPrivateUse(stem) ? null : stem
+}
+
 export const VARIATION_SELECTOR = 0xfe0f
 const VARIATION_SELECTOR_UNIT = toUnit(VARIATION_SELECTOR)
 
