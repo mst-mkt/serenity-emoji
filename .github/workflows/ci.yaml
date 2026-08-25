@@ -22,7 +22,7 @@ jobs:
       - name: setup vite+
         uses: voidzero-dev/setup-vp@2dec1e33f4ab2c6d5bce1b0c4607961bb1a3f7a1 # v1.12.0
         with:
-          node-version: '22'
+          node-version: '24'
           cache: true
       - name: check (lint, format, type)
         run: vp check

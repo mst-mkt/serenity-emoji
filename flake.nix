@@ -20,7 +20,7 @@
       devShells = forAllSystems (pkgs: {
         default = pkgs.mkShell {
           packages = with pkgs; [
-            nodejs-slim_22
+            nodejs-slim_24
             pnpm
           ];
 
