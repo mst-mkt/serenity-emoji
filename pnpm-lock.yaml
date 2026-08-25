@@ -6,12 +6,18 @@ settings:
 
 catalogs:
   default:
+    '@gunshi/plugin-completion':
+      specifier: ^0.37.1
+      version: 0.37.1
     '@hono/standard-validator':
       specifier: ^0.4.0
       version: 0.4.0
     '@types/node':
       specifier: ^24.13.3
       version: 24.13.3
+    gunshi:
+      specifier: ^0.37.1
+      version: 0.37.1
     hono:
       specifier: ^4.13.3
       version: 4.13.3
@@ -73,6 +79,28 @@ importers:
         specifier: 'catalog:'
         version: 4.125.0
 
+  apps/cli:
+    dependencies:
+      '@gunshi/plugin-completion':
+        specifier: 'catalog:'
+        version: 0.37.1(@gunshi/plugin-i18n@0.37.1)
+      '@serenity-emoji/emoji':
+        specifier: workspace:*
+        version: link:../../packages/emoji
+      '@serenity-emoji/font':
+        specifier: workspace:*
+        version: link:../../packages/font
+      '@serenity-emoji/image':
+        specifier: workspace:*
+        version: link:../../packages/image
+      gunshi:
+        specifier: 'catalog:'
+        version: 0.37.1
+    devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 24.13.3
+
   packages/emoji:
     dependencies:
       '@serenity-emoji/lib':
@@ -128,6 +156,21 @@ packages:
 
   '@blazediff/core@1.9.1':
     resolution: {integrity: sha512-ehg3jIkYKulZh+8om/O25vkvSsXXwC+skXmyA87FFx6A/45eqOkZsBltMw/TVteb0mloiGT8oGRTcjRAz66zaA==}
+
+  '@bomb.sh/tab@0.0.19':
+    resolution: {integrity: sha512-dTRfo9Q9B+lbLG3JCu8a/AGQSfD2XXcFcnakQzVjSOX+VvR/s9zpsH8TlqV3iHqazniRn1Ypwd1hcRlXcu/4BA==}
+    hasBin: true
+    peerDependencies:
+      cac: ^6.7.14
+      citty: ^0.1.6 || ^0.2.0
+      commander: ^13.1.0 || ^14.0.0 || ^15.0.0
+    peerDependenciesMeta:
+      cac:
+        optional: true
+      citty:
+        optional: true
+      commander:
+        optional: true
 
   '@cloudflare/kv-asset-handler@0.5.0':
     resolution: {integrity: sha512-jxQYkj8dSIzc0cD6cMMNdOc1UVjqSqu8BZdor5s8cGjW2I8BjODt/kWPVdY+u9zj3ms75Q5qaZgnxUad83+eAg==}
@@ -343,6 +386,25 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
+
+  '@gunshi/plugin-completion@0.37.1':
+    resolution: {integrity: sha512-6FHJiLvFYB1/bOr8waRIpwvyzdL/51vrGJL0klAFOk5CbfWogsOrv3kR+wX9WTgJHYVZJeMafg7tsZCHftZm2w==}
+    engines: {node: '>= 22'}
+    peerDependencies:
+      '@gunshi/plugin-i18n': 0.37.1
+
+  '@gunshi/plugin-i18n@0.37.1':
+    resolution: {integrity: sha512-K5L5IDeaD5JIGEPn4Wcl0cXyPggmmtj4sSQwCsqzAYc30VfJu+BQscoEt7wIoJ3UR6gnjY7BJh5dxGcmBcUvaA==}
+    engines: {node: '>= 22'}
+    peerDependencies:
+      '@gunshi/plugin-global': 0.37.1
+    peerDependenciesMeta:
+      '@gunshi/plugin-global':
+        optional: true
+
+  '@gunshi/plugin@0.37.1':
+    resolution: {integrity: sha512-ljjBaL15jCwX6tEtWRdmAQ/y/svGcMZa5mVhMPgXFeQFQ++srK/x5dx8uchQFrE2MTqaFhMMjNK9AQowCyRv9A==}
+    engines: {node: '>= 22'}
 
   '@hono/standard-validator@0.4.0':
     resolution: {integrity: sha512-MxOm1asDh9j7c1D0KiWwppSbFgAQxTRO4YEhjMrJn3lF1BIcXenPdgjSGKDRfQmZdaTaMA8slQLETgVOKyJxFw==}
@@ -1430,6 +1492,10 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
 
+  gunshi@0.37.1:
+    resolution: {integrity: sha512-C3t35z65PQpAHay/gzEu4J/7SNWXn2NhfC4RfZQPxyOqkPfDTizthxCPoSU48OazoVherCuCpFDKI1qcY425Gw==}
+    engines: {node: '>= 22'}
+
   hono@4.13.3:
     resolution: {integrity: sha512-r8AO2mYHoLxSHkgafNeC/BXyb2vWRxD3jem4Ts+ptav8oTG5FIRifAjuJEmZI4bSvvc2ns0GxmIYiZnHqN3mMw==}
     engines: {node: '>=16.9.0'}
@@ -1857,6 +1923,8 @@ snapshots:
 
   '@blazediff/core@1.9.1': {}
 
+  '@bomb.sh/tab@0.0.19': {}
+
   '@cloudflare/kv-asset-handler@0.5.0': {}
 
   '@cloudflare/unenv-preset@2.16.1(unenv@2.0.0-rc.24)(workerd@1.20260820.1)':
@@ -1982,6 +2050,22 @@ snapshots:
 
   '@esbuild/win32-x64@0.28.1':
     optional: true
+
+  '@gunshi/plugin-completion@0.37.1(@gunshi/plugin-i18n@0.37.1)':
+    dependencies:
+      '@bomb.sh/tab': 0.0.19
+      '@gunshi/plugin': 0.37.1
+      '@gunshi/plugin-i18n': 0.37.1
+    transitivePeerDependencies:
+      - cac
+      - citty
+      - commander
+
+  '@gunshi/plugin-i18n@0.37.1':
+    dependencies:
+      '@gunshi/plugin': 0.37.1
+
+  '@gunshi/plugin@0.37.1': {}
 
   '@hono/standard-validator@0.4.0(@standard-schema/spec@1.1.0)(hono@4.13.3)':
     dependencies:
@@ -2669,6 +2753,8 @@ snapshots:
 
   fsevents@2.3.3:
     optional: true
+
+  gunshi@0.37.1: {}
 
   hono@4.13.3: {}
 

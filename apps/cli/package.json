@@ -1,0 +1,19 @@
+{
+  "name": "@serenity-emoji/cli",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vp pack"
+  },
+  "dependencies": {
+    "@gunshi/plugin-completion": "catalog:",
+    "@serenity-emoji/emoji": "workspace:*",
+    "@serenity-emoji/font": "workspace:*",
+    "@serenity-emoji/image": "workspace:*",
+    "gunshi": "catalog:"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:"
+  }
+}

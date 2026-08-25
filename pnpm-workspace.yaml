@@ -5,8 +5,10 @@ packages:
 catalogMode: strict
 
 catalog:
+  '@gunshi/plugin-completion': ^0.37.1
   '@hono/standard-validator': ^0.4.0
   '@types/node': ^24.13.3
+  gunshi: ^0.37.1
   hono: ^4.13.3
   kuron: ^0.1.0
   typescript: ^7.0.2
