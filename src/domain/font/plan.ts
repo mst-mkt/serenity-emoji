@@ -92,7 +92,7 @@ const planColors = (entries: Entry[], componentCount: number) => {
   }, new Map())
   const sortedColors = [...colors].toSorted(([a], [b]) => (a < b ? -1 : 1))
   const paletteIndices = new Map(sortedColors.map(([key], index) => [key, index]))
-  const palette = sortedColors.map(([_, color]) => color)
+  const palette = sortedColors.map(([, color]) => color)
 
   const paletteOf = (color: Rgba) => {
     const index = paletteIndices.get(colorKey(color))

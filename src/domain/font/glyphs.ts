@@ -63,7 +63,7 @@ export const toGlyph = (grid: DotGrid) => {
   }, new Map())
 
   const sortedByColor = [...byColor].toSorted(([a], [b]) => (a < b ? -1 : 1))
-  const layers = sortedByColor.map(([_, layer]) => layer)
+  const layers = sortedByColor.map(([, layer]) => layer)
 
   return { advance: UNITS_PER_EM, silhouette, layers }
 }

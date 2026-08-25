@@ -40,7 +40,7 @@ const ligatureSubst = (ligatures: Ligature[]) => {
   }, new Map())
   const groups = [...grouped].toSorted(([a], [b]) => a - b)
 
-  const sets = groups.map(([_, list]) => ligatureSet(list))
+  const sets = groups.map(([, list]) => ligatureSet(list))
   const coverage = struct([
     ['coverageFormat', u16(1)],
     ['glyphCount', u16(groups.length)],
