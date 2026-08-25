@@ -105,11 +105,13 @@ export const buildHmtx = (glyphs: PlannedGlyph[], bounds: GlyphBounds[]) =>
     ),
   )
 
+export const FONT_FAMILY = 'Serenity Emoji'
+
 const NAMES = [
-  [1, 'Serenity Emoji'],
+  [1, FONT_FAMILY],
   [2, 'Regular'],
-  [3, 'Serenity Emoji 1.0'],
-  [4, 'Serenity Emoji'],
+  [3, `${FONT_FAMILY} 1.0`],
+  [4, FONT_FAMILY],
   [5, 'Version 1.0'],
   [6, 'SerenityEmoji-Regular'],
 ] as const satisfies readonly (readonly [number, string])[]

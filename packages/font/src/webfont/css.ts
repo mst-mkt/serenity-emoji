@@ -1,3 +1,4 @@
+import { FONT_FAMILY } from '../tables/metadata'
 import { formatFontFile } from './file-name'
 import type { SubsetEntry } from './subsets'
 
@@ -27,7 +28,7 @@ const fontFace = ({ subset, range }: SubsetEntry, baseUrl: string) => {
   ])
 
   const rule = cssRule('@font-face', [
-    declaration('font-family', "'Serenity Emoji'"),
+    declaration('font-family', `'${FONT_FAMILY}'`),
     declaration('src', src),
     declaration('font-display', 'swap'),
     ...(range === null ? [] : [declaration('unicode-range', range)]),
