@@ -186,6 +186,51 @@ The TTF or WOFF the stylesheet points at, one file per subset.
 | `component`       | 9           | ![🏻](https://serenity.keito.dev/🏻/png?size=24&square)![🦰](https://serenity.keito.dev/🦰/png?size=24&square)                                                        |
 | `full`            | all         |                                                                                                                                                                       |
 
+## CLI
+
+```sh
+nix run github:mst-mkt/serenity-emoji#cli -- render ansi 🧶
+nix profile install github:mst-mkt/serenity-emoji#cli
+```
+
+### Render `serenity-emoji render {format} {emoji}`
+
+An emoji in the chosen format, on stdout.
+
+```sh
+serenity-emoji render ansi 🧶
+serenity-emoji render image 🧶
+serenity-emoji render png 🧶 > yarn.png
+serenity-emoji render json 🧶 | jq '.[0]'
+```
+
+The emoji can be the character itself, its code points, or a shortcode.
+
+```sh
+serenity-emoji render ansi 🧶
+serenity-emoji render ansi U+1F9F6
+serenity-emoji render ansi :yarn:
+```
+
+The format is one of `png`, `svg`, `ico`, `json`, `csv`, `ansi`, or `image`. `image` picks a terminal graphics protocol.
+
+| Option           | Default                                          | Description                                                                                                                     |
+| ---------------- | ------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------- |
+| `--size`         | native, 512 for `png` and `image`, 256 for `ico` | longer side in px, 1 to 2048, aspect kept                                                                                       |
+| `--square`       | off                                              | pad to a centered square with transparent margins                                                                               |
+| `--emoji-dir`    | the API                                          | a local [`Base/res/emoji`](https://github.com/SerenityOS/serenity/tree/master/Base/res/emoji) checkout to read the artwork from |
+| `--color-format` | `object` for `json`, `hex` for `csv`             | how each color is spelled                                                                                                       |
+| `--separator`    | `,`                                              | column separator for `csv`                                                                                                      |
+| `--protocol`     | detected                                         | `kitty`, `iterm`, or `sixel` for `image`                                                                                        |
+
+### Build `serenity-emoji build {emoji-dir} {out-dir}`
+
+```sh
+serenity-emoji build ~/serenity/Base/res/emoji ./fonts
+```
+
+The output is one `serenity-emoji.{subset}.ttf` and `.woff` per subset, plus a `manifest.json` pairing each subset with its `unicode-range`.
+
 ## License
 
 This project is [MIT](./LICENSE).
