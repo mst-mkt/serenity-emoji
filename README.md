@@ -174,7 +174,7 @@ The TTF or WOFF the stylesheet points at, one file per subset.
 
 | Subset            | Code points | Examples                                                                                                                                                              |
 | ----------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `smileys-emotion` | 163         | ![😀](https://serenity.keito.dev/😀/png?size=24&square)![😭](https://serenity.keito.dev/😭/png?size=24&square)![❤](https://serenity.keito.dev/❤/png?size=24&square)   |
+| `smileys-emotion` | 163         | ![😀](https://serenity.keito.dev/😀/png?size=24&square)![😭](https://serenity.keito.dev/😭/png?size=24&square)![❤️](https://serenity.keito.dev/❤️/png?size=24&square) |
 | `people-body`     | 158         | ![👋](https://serenity.keito.dev/👋/png?size=24&square)![🙌](https://serenity.keito.dev/🙌/png?size=24&square)![🤙](https://serenity.keito.dev/🤙/png?size=24&square) |
 | `animals-nature`  | 155         | ![🐱](https://serenity.keito.dev/🐱/png?size=24&square)![🦊](https://serenity.keito.dev/🦊/png?size=24&square)![🌸](https://serenity.keito.dev/🌸/png?size=24&square) |
 | `food-drink`      | 129         | ![🍕](https://serenity.keito.dev/🍕/png?size=24&square)![🍔](https://serenity.keito.dev/🍔/png?size=24&square)![🍒](https://serenity.keito.dev/🍒/png?size=24&square) |
@@ -182,7 +182,7 @@ The TTF or WOFF the stylesheet points at, one file per subset.
 | `activities`      | 85          | ![⚽](https://serenity.keito.dev/⚽/png?size=24&square)![🎮](https://serenity.keito.dev/🎮/png?size=24&square)![🎉](https://serenity.keito.dev/🎉/png?size=24&square) |
 | `objects`         | 265         | ![💡](https://serenity.keito.dev/💡/png?size=24&square)![🔑](https://serenity.keito.dev/🔑/png?size=24&square)![📷](https://serenity.keito.dev/📷/png?size=24&square) |
 | `symbols`         | 212         | ![✅](https://serenity.keito.dev/✅/png?size=24&square)![❓](https://serenity.keito.dev/❓/png?size=24&square)![🔵](https://serenity.keito.dev/🔵/png?size=24&square) |
-| `flags`           | 5           | ![🏁](https://serenity.keito.dev/🏁/png?size=24&square)![🚩](https://serenity.keito.dev/🚩/png?size=24&square)![🏳](https://serenity.keito.dev/🏳/png?size=24&square) |
+| `flags`           | 5           | ![🏁](https://serenity.keito.dev/🏁/png?size=24&square)![🚩](https://serenity.keito.dev/🚩/png?size=24&square)![🏳️](https://serenity.keito.dev/🏳️/png?size=24&square) |
 | `component`       | 9           | ![🏻](https://serenity.keito.dev/🏻/png?size=24&square)![🦰](https://serenity.keito.dev/🦰/png?size=24&square)                                                        |
 | `full`            | all         |                                                                                                                                                                       |
 
