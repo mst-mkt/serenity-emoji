@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vite-plus/test'
 
-import { concat, crc32, hex, i16, toHex, u16, u32 } from './bytes'
+import { concat, crc32, hex, i8, i16, toHex, u8, u16, u32 } from './bytes'
 
 describe('concat', () => {
   it('merges buffers in order', () => {
@@ -31,6 +31,31 @@ describe('crc32', () => {
     const checksum = crc32(new Uint8Array(0))
 
     expect(checksum).toBe(0)
+  })
+})
+
+describe('u8', () => {
+  it('encodes a single byte', () => {
+    const bytes = u8(0x12)
+
+    expect([...bytes]).toEqual([0x12])
+  })
+
+  it('rejects values out of range', () => {
+    expect(() => u8(0x100)).toThrow('u8 out of range: 256')
+    expect(() => u8(-1)).toThrow('u8 out of range: -1')
+  })
+})
+
+describe('i8', () => {
+  it('encodes negative values as two’s complement', () => {
+    const bytes = i8(-1)
+
+    expect([...bytes]).toEqual([0xff])
+  })
+
+  it('rejects values out of range', () => {
+    expect(() => i8(0x80)).toThrow('i8 out of range: 128')
   })
 })
 

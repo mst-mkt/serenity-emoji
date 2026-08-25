@@ -84,4 +84,43 @@ describe('buildFonts', () => {
     expect(other.ttf).toEqual(fonts.ttf)
     expect(other.woff).toEqual(fonts.woff)
   })
+
+  it('swaps the color tables for bitmap ones with cbdt', async () => {
+    const { ttf } = await buildFonts(grids(), { colorTable: 'cbdt' })
+
+    const tags = directoryOf(ttf).keys().toArray()
+    expect(tags).toEqual([
+      'CBDT',
+      'CBLC',
+      'GSUB',
+      'OS/2',
+      'cmap',
+      'glyf',
+      'head',
+      'hhea',
+      'hmtx',
+      'loca',
+      'maxp',
+      'name',
+      'post',
+    ])
+    const cblc = directoryOf(ttf).get('CBLC') ?? 0
+    expect(u16At(ttf, cblc + 48)).toBe(1) // strike starts at the first base glyph
+  })
+
+  it('produces a cbdt ttf that checksums to the magic constant', async () => {
+    const { ttf } = await buildFonts(grids(), { colorTable: 'cbdt' })
+
+    expect(u32At(ttf, 0)).toBe(0x00010000)
+    expect(checksum(ttf)).toBe(0xb1b0afba)
+  })
+
+  it('builds identical cbdt bytes regardless of input order', async () => {
+    const reversed = new Map([...grids()].toReversed())
+
+    const fonts = await buildFonts(grids(), { colorTable: 'cbdt' })
+    const other = await buildFonts(reversed, { colorTable: 'cbdt' })
+
+    expect(other.ttf).toEqual(fonts.ttf)
+  })
 })

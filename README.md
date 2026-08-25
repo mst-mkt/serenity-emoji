@@ -231,6 +231,10 @@ serenity-emoji build ~/serenity/Base/res/emoji ./fonts
 
 The output is one `serenity-emoji.{subset}.ttf` and `.woff` per subset, plus a `manifest.json` pairing each subset with its `unicode-range`.
 
+| Option          | Default | Description                                                                    |
+| --------------- | ------- | ------------------------------------------------------------------------------ |
+| `--color-table` | `colr`  | `colr` for vector color layers, or `cbdt` for 128px pixel bitmaps (`ttf` only) |
+
 ## System Font
 
 The font as a Nix package, to install as a system font.

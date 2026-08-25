@@ -136,6 +136,31 @@ describe('planFont', () => {
     expect(threeComponent).toEqual([{ components: [5, 3, 6], glyph: 1 }])
   })
 
+  it('returns bitmap grids aligned with their base glyph ids', () => {
+    const grids = new Map([
+      ['U+1F601', bicolor],
+      ['U+1F600', dot()],
+    ])
+
+    const plan = planFont(grids)
+
+    expect(plan.bitmaps).toEqual([
+      { glyph: 1, grid: dot() },
+      { glyph: 2, grid: bicolor },
+    ])
+  })
+
+  it('drops layer glyphs and the palette for cbdt', () => {
+    const grids = new Map([['U+1F600', bicolor]])
+
+    const plan = planFont(grids, 'cbdt')
+
+    expect(plan.glyphs).toHaveLength(2)
+    expect(plan.cmap.get(0x1f600)).toBe(1)
+    expect(plan.palette).toEqual([])
+    expect(plan.colorBases).toEqual([])
+  })
+
   it('throws when no glyphs remain', () => {
     const grids = new Map([['U+23_U+20E3', dot()]])
 

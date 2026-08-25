@@ -6,6 +6,8 @@ import { SIGNATURE } from '../decode/chunks'
 import type { DotGrid, Rgba } from '../dot-grid'
 import { dimensionsOf, scaleToFit, type SizeOptions } from '../scale'
 
+export type PngOptions = SizeOptions & { metadata?: boolean }
+
 const chunk = (type: string, data: Uint8Array) => {
   const body = concat([new TextEncoder().encode(type), data])
   return concat([u32(data.length), body, u32(crc32(body))])
@@ -29,19 +31,21 @@ const toScanline = (row: Rgba[], width: number) => {
   return line
 }
 
-export const toPng = async (pixels: DotGrid, options: SizeOptions = {}) => {
+export const toPng = async (pixels: DotGrid, options: PngOptions = {}) => {
+  const { metadata = true } = options
   const grid = scaleToFit(pixels, options.size)
   const { width, height } = dimensionsOf(grid)
   if (width === 0 || height === 0) throw new Error('cannot render an empty grid')
 
   const idat = await deflate(concat(grid.map((row) => toScanline(row, width))))
-  const metadata = pngTextRecords().map(([keyword, value]) => textChunk(keyword, value))
+  const records = metadata ? pngTextRecords() : []
+  const textChunks = records.map(([keyword, value]) => textChunk(keyword, value))
 
   return concat([
     Uint8Array.from(SIGNATURE),
     ihdr(width, height),
     chunk('IDAT', idat),
-    ...metadata,
+    ...textChunks,
     chunk('IEND', new Uint8Array(0)),
   ])
 }
