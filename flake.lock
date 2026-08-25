@@ -18,7 +18,24 @@
     },
     "root": {
       "inputs": {
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "serenity": "serenity"
+      }
+    },
+    "serenity": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1787660975,
+        "narHash": "sha256-7wtzKbBQ5MfItLyqqzadU2rNGTa+Nqrf/3KNr/Lg10M=",
+        "owner": "SerenityOS",
+        "repo": "serenity",
+        "rev": "fed29b0c203446756d74d144743c77589d116a05",
+        "type": "github"
+      },
+      "original": {
+        "owner": "SerenityOS",
+        "repo": "serenity",
+        "type": "github"
       }
     }
   },
