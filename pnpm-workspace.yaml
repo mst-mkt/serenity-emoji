@@ -1,3 +1,19 @@
+packages:
+  - packages/*
+  - apps/*
+
+catalogMode: strict
+
+catalog:
+  '@hono/standard-validator': ^0.4.0
+  '@types/node': ^24.13.3
+  hono: ^4.13.3
+  kuron: ^0.1.0
+  typescript: ^7.0.2
+  valibot: ^1.4.2
+  vite-plus: ^0.2.9
+  wrangler: ^4.125.0
+
 allowBuilds:
   esbuild: false
   sharp: false

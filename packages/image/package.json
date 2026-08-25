@@ -1,0 +1,26 @@
+{
+  "name": "@serenity-emoji/image",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./color/format": "./src/color/format.ts",
+    "./decode": "./src/decode/decode.ts",
+    "./dot-grid": "./src/dot-grid.ts",
+    "./render/ansi": "./src/render/ansi.ts",
+    "./render/csv": "./src/render/csv.ts",
+    "./render/ico": "./src/render/ico.ts",
+    "./render/iterm": "./src/render/iterm.ts",
+    "./render/kitty": "./src/render/kitty.ts",
+    "./render/png": "./src/render/png.ts",
+    "./render/sixel": "./src/render/sixel.ts",
+    "./render/svg": "./src/render/svg.ts",
+    "./scale": "./src/scale.ts",
+    "./square": "./src/square.ts",
+    "./test/fixtures": "./src/test/fixtures.ts"
+  },
+  "dependencies": {
+    "@serenity-emoji/emoji": "workspace:*",
+    "@serenity-emoji/lib": "workspace:*"
+  }
+}

@@ -6,17 +6,9 @@
   "scripts": {
     "prepare": "vp config"
   },
-  "dependencies": {
-    "@hono/standard-validator": "^0.4.0",
-    "hono": "^4.13.3",
-    "kuron": "^0.1.0",
-    "valibot": "^1.4.2"
-  },
   "devDependencies": {
-    "@types/node": "^24.13.3",
-    "typescript": "^7.0.2",
-    "vite-plus": "^0.2.9",
-    "wrangler": "^4.125.0"
+    "typescript": "catalog:",
+    "vite-plus": "catalog:"
   },
   "packageManager": "pnpm@11.5.2"
 }
