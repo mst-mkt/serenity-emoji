@@ -3,11 +3,9 @@ import { buildFonts, type FontFormat } from '@serenity-emoji/font/build'
 import { type FontFile } from '@serenity-emoji/font/webfont/file-name'
 import { parseRange } from '@serenity-emoji/font/webfont/range'
 import {
-  FULL_SUBSET,
-  manifestOf,
+  planSubsets,
   selectByCodePoints,
   selectByRange,
-  splitBySubset,
 } from '@serenity-emoji/font/webfont/subsets'
 import { type DotGrid } from '@serenity-emoji/image/dot-grid'
 import { sha256Hex } from '@serenity-emoji/lib/digest'
@@ -26,14 +24,11 @@ export const buildFontSubsets = async (target: string) => {
   const grids = await getAllGrids()
   if (grids.size === 0) return
 
-  const buckets = splitBySubset(grids)
-
-  await buildAndStore(FULL_SUBSET, grids)
-  for (const [subset, subGrids] of buckets) {
+  const { subsets, manifest } = planSubsets(grids)
+  for (const [subset, subGrids] of subsets) {
     await buildAndStore(subset, subGrids)
   }
 
-  const manifest = [{ subset: FULL_SUBSET, range: null }, ...manifestOf(buckets)]
   await putFontManifest(manifest)
   await putFontBuilt(target)
 }

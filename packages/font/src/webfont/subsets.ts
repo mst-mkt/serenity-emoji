@@ -98,3 +98,12 @@ export const manifestOf = (buckets: Map<string, Map<string, DotGrid>>) => {
     .toSorted(([a], [b]) => (a < b ? -1 : 1))
     .map(([subset, grids]) => ({ subset, range: toUnicodeRange(coverageOf(grids)) }))
 }
+
+// the deliverable set: the full font plus one subset per emoji group, with its manifest
+export const planSubsets = (grids: Map<string, DotGrid>) => {
+  const buckets = splitBySubset(grids)
+  const subsets = new Map([[FULL_SUBSET, grids], ...buckets])
+  const manifest: SubsetEntry[] = [{ subset: FULL_SUBSET, range: null }, ...manifestOf(buckets)]
+
+  return { subsets, manifest }
+}
