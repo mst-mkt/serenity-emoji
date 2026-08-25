@@ -7,16 +7,16 @@
     "prepare": "vp config"
   },
   "dependencies": {
-    "@hono/standard-validator": "^0.2.2",
-    "hono": "^4.12.25",
-    "kuron": "^0.0.3",
-    "valibot": "^1.4.1"
+    "@hono/standard-validator": "^0.4.0",
+    "hono": "^4.13.3",
+    "kuron": "^0.1.0",
+    "valibot": "^1.4.2"
   },
   "devDependencies": {
-    "@types/node": "^25.9.3",
-    "@typescript/native-preview": "7.0.0-dev.20260611.2",
-    "vite-plus": "^0.1.24",
-    "wrangler": "^4.100.0"
+    "@types/node": "^24.13.3",
+    "typescript": "^7.0.2",
+    "vite-plus": "^0.2.9",
+    "wrangler": "^4.125.0"
   },
   "packageManager": "pnpm@11.5.2"
 }
