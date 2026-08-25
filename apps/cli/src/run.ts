@@ -4,9 +4,16 @@ import type { CliOptions, Command, DefaultGunshiParams, GunshiParams } from 'gun
 
 import pkg from '../package.json' with { type: 'json' }
 
-const isRenderedError = (error: unknown) =>
-  error instanceof AggregateError &&
-  error.errors.every((inner) => isArgsValidationError(inner) || isCommandNotFoundError(inner))
+const isUsageFailure = (failure: unknown) => {
+  return isArgsValidationError(failure) || isCommandNotFoundError(failure)
+}
+
+const usageFailuresOf = (error: unknown) => {
+  if (!(error instanceof AggregateError)) return null
+
+  const failures = error.errors.filter(isUsageFailure)
+  return failures.length === error.errors.length ? failures : null
+}
 
 export const runCli = async <G extends GunshiParams = DefaultGunshiParams>(
   args: string[],
@@ -19,11 +26,16 @@ export const runCli = async <G extends GunshiParams = DefaultGunshiParams>(
       version: pkg.version,
       description: 'Toolbox for the SerenityOS emoji font',
       strict: true,
+      renderHeader: null,
+      renderValidationErrors: null,
       subCommands: options.subCommands,
       plugins: [completion()],
     })
   } catch (error) {
-    if (!isRenderedError(error)) throw error
+    const failures = usageFailuresOf(error)
+    if (failures === null) throw error
+
+    console.error(failures.map((failure) => failure.message).join('\n'))
     process.exit(1)
   }
 }

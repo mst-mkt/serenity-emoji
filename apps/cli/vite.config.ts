@@ -7,7 +7,7 @@ export default defineConfig({
     dts: false,
     // bundle the declared dependencies; onlyImport asserts dist/main.mjs stays standalone
     deps: {
-      alwaysBundle: [/^@serenity-emoji\//, /^@gunshi\//, 'gunshi'],
+      alwaysBundle: [/^@serenity-emoji\//, /^@gunshi\//, 'gunshi', 'emoji-name-map', 'valibot'],
       onlyImport: [],
     },
   },

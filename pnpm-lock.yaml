@@ -15,6 +15,9 @@ catalogs:
     '@types/node':
       specifier: ^24.13.3
       version: 24.13.3
+    emoji-name-map:
+      specifier: ^2.0.3
+      version: 2.0.3
     gunshi:
       specifier: ^0.37.1
       version: 0.37.1
@@ -93,9 +96,15 @@ importers:
       '@serenity-emoji/image':
         specifier: workspace:*
         version: link:../../packages/image
+      emoji-name-map:
+        specifier: 'catalog:'
+        version: 2.0.3
       gunshi:
         specifier: 'catalog:'
         version: 0.37.1
+      valibot:
+        specifier: 'catalog:'
+        version: 1.4.2(typescript@7.0.2)
     devDependencies:
       '@types/node':
         specifier: 'catalog:'
@@ -1460,6 +1469,9 @@ packages:
   dom-accessibility-api@0.5.16:
     resolution: {integrity: sha512-X7BJ2yElsnOJ30pZF4uIIDfBEVgF4XEBxL9Bxhy6dnrm5hkzqmsWHGTiHqRiITNhMyFLyAiWndIJP7Z1NTteDg==}
 
+  emoji-name-map@2.0.3:
+    resolution: {integrity: sha512-3KBuQuhYkRtLd9utBKfTtclbWP3IytC1FNcXg+NKARltPSYpkg/MLiklGv4vLwl8A8jMQjdneXNBYx8k0rrg+g==}
+
   error-stack-parser-es@1.0.5:
     resolution: {integrity: sha512-5qucVt2XcuGMcEGgWI7i+yZpmpByQ8J1lHhcL7PwqCwu9FPP3VUXzT4ltHe5i2z9dePwEHcDVOAfSnHsOlCXRA==}
 
@@ -2707,6 +2719,8 @@ snapshots:
   detect-libc@2.1.2: {}
 
   dom-accessibility-api@0.5.16: {}
+
+  emoji-name-map@2.0.3: {}
 
   error-stack-parser-es@1.0.5: {}
 
