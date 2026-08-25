@@ -2,6 +2,9 @@
   "name": "@serenity-emoji/cli",
   "version": "0.0.0",
   "private": true,
+  "bin": {
+    "serenity-emoji": "./dist/main.mjs"
+  },
   "type": "module",
   "scripts": {
     "build": "vp pack"

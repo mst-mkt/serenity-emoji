@@ -23,9 +23,9 @@ export const runCli = async <G extends GunshiParams = DefaultGunshiParams>(
 ) => {
   try {
     await cli(args, entry, {
-      name: 'serenity-emoji',
+      name: entry.name,
       version: pkg.version,
-      description: 'Toolbox for the SerenityOS emoji font',
+      description: entry.description,
       strict: true,
       renderHeader: null,
       renderValidationErrors: null,

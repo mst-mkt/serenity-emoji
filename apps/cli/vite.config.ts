@@ -5,7 +5,7 @@ export default defineConfig({
     entry: ['src/main.ts'],
     format: ['esm'],
     dts: false,
-    // bundle the declared dependencies; onlyImport asserts dist/main.mjs stays standalone
+    banner: '#!/usr/bin/env node',
     deps: {
       alwaysBundle: [/^@serenity-emoji\//, /^@gunshi\//, 'gunshi', 'emoji-name-map', 'valibot'],
       onlyImport: [],
