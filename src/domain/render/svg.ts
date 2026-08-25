@@ -1,6 +1,6 @@
+import { svgMetadata } from '@serenity-emoji/emoji/attribution'
 import { hex } from '@serenity-emoji/lib/bytes'
 
-import { svgMetadata } from '../attribution'
 import { type DotGrid, type Rgba, type Run, toRuns } from '../dot-grid'
 import { dimensionsOf, fitTo, type SizeOptions } from '../image/scale'
 

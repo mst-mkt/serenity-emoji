@@ -1,6 +1,5 @@
+import { licenseLink } from '@serenity-emoji/emoji/attribution'
 import type { MiddlewareHandler } from 'hono'
-
-import { licenseLink } from '../../domain/attribution'
 
 export const licenseHeaderMiddleware: MiddlewareHandler = async (c, next) => {
   await next()

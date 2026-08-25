@@ -1,10 +1,10 @@
 import { sValidator } from '@hono/standard-validator'
+import { toStem } from '@serenity-emoji/emoji'
 import { Hono } from 'hono'
 import * as v from 'valibot'
 
 import type { AppEnv } from '../bindings'
 import { COLOR_FORMATS, COLOR_STRING_FORMATS, formatColor } from '../domain/color/format'
-import { toStem } from '../domain/emoji'
 import { scaleToFit } from '../domain/image/scale'
 import { toSquare } from '../domain/image/square'
 import { toAnsi } from '../domain/render/ansi'

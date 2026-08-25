@@ -1,0 +1,14 @@
+{
+  "name": "@serenity-emoji/emoji",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/emoji.ts",
+    "./attribution": "./src/attribution.ts",
+    "./sync": "./src/sync.ts"
+  },
+  "dependencies": {
+    "@serenity-emoji/lib": "workspace:*"
+  }
+}

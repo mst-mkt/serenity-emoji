@@ -1,6 +1,7 @@
+import { digestOfEntries, nextStored, planSync, type TreeEntry } from '@serenity-emoji/emoji/sync'
+
 import type { DotGrid } from '../domain/dot-grid'
 import { decodePng } from '../domain/image/decode/decode'
-import { digestOfEntries, nextStored, planSync, type TreeEntry } from '../domain/sync'
 import { fetchEmojiPng, fetchEmojiTree, fetchHead } from '../sources/github'
 import { getSyncedCommit, putSyncedCommit } from '../storage/cursor'
 import { getFontTarget, putFontTarget } from '../storage/fonts'

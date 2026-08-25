@@ -1,5 +1,6 @@
+import { toCodePoints, VARIATION_SELECTOR } from '@serenity-emoji/emoji'
+
 import type { DotGrid, Rgba } from '../dot-grid'
-import { toCodePoints, VARIATION_SELECTOR } from '../emoji'
 import { colorKey, type Glyph, type Rect, toGlyph, UNITS_PER_EM } from './glyphs'
 import { prefixSums } from './write'
 

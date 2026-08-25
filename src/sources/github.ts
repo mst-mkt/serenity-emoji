@@ -1,7 +1,6 @@
+import { hasPrivateUse } from '@serenity-emoji/emoji'
 import { env } from 'cloudflare:workers'
 import * as v from 'valibot'
-
-import { hasPrivateUse } from '../domain/emoji'
 
 const REPO = 'SerenityOS/serenity'
 const EMOJI_PATH = 'Base/res/emoji'

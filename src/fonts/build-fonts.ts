@@ -1,7 +1,7 @@
+import { textCodePoints } from '@serenity-emoji/emoji'
 import { sha256Hex } from '@serenity-emoji/lib/digest'
 
 import { type DotGrid } from '../domain/dot-grid'
-import { textCodePoints } from '../domain/emoji'
 import { buildFonts, type FontFormat } from '../domain/font/build'
 import { type FontFile } from '../domain/webfont/file-name'
 import { parseRange } from '../domain/webfont/range'

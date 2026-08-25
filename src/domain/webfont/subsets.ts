@@ -1,7 +1,7 @@
+import { toCodePoints, toUnit, VARIATION_SELECTOR } from '@serenity-emoji/emoji'
 import * as v from 'valibot'
 
 import type { DotGrid } from '../dot-grid'
-import { toCodePoints, toUnit, VARIATION_SELECTOR } from '../emoji'
 import { EMOJI_GROUPS } from './groups.gen'
 import type { CodePointRange } from './range'
 
