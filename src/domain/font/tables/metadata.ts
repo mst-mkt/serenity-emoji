@@ -1,4 +1,5 @@
-import { concat, i16, u16, u32 } from '../../../lib/bytes'
+import { concat, i16, u16, u32 } from '@serenity-emoji/lib/bytes'
+
 import { fontNameRecords } from '../../attribution'
 import { ASCENT, DESCENT, type Rect, UNITS_PER_EM } from '../glyphs'
 import type { PlannedGlyph } from '../plan'

@@ -1,4 +1,5 @@
-import { concat, u16 } from '../../../lib/bytes'
+import { concat, u16 } from '@serenity-emoji/lib/bytes'
+
 import type { Ligature } from '../plan'
 import { prefixSums, struct, tag, withSections } from '../write'
 

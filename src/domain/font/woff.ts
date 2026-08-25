@@ -1,5 +1,6 @@
-import { concat, u16, u32 } from '../../lib/bytes'
-import { deflate } from '../../lib/zlib'
+import { concat, u16, u32 } from '@serenity-emoji/lib/bytes'
+import { deflate } from '@serenity-emoji/lib/zlib'
+
 import type { Sfnt } from './sfnt'
 import { pad4, prefixSums, struct, tag } from './write'
 

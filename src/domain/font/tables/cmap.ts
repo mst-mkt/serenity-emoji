@@ -1,4 +1,5 @@
-import { concat, i16, u16, u32 } from '../../../lib/bytes'
+import { concat, i16, u16, u32 } from '@serenity-emoji/lib/bytes'
+
 import { prefixSums, struct, withSections } from '../write'
 
 type Group = { start: number; end: number; glyph: number }

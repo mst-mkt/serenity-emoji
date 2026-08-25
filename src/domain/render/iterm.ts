@@ -1,4 +1,4 @@
-import { base64 } from '../../lib/base64'
+import { base64 } from '@serenity-emoji/lib/base64'
 
 // iTerm2 Inline Images Protocol (OSC 1337), BEL-terminated
 export const toIterm = (png: Uint8Array) => {

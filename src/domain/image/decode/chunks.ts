@@ -1,4 +1,4 @@
-import { concat, crc32 } from '../../../lib/bytes'
+import { concat, crc32 } from '@serenity-emoji/lib/bytes'
 
 type Chunk = { type: string; data: Uint8Array }
 

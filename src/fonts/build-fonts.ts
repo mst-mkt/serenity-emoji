@@ -1,3 +1,5 @@
+import { sha256Hex } from '@serenity-emoji/lib/digest'
+
 import { type DotGrid } from '../domain/dot-grid'
 import { textCodePoints } from '../domain/emoji'
 import { buildFonts, type FontFormat } from '../domain/font/build'
@@ -10,7 +12,6 @@ import {
   selectByRange,
   splitBySubset,
 } from '../domain/webfont/subsets'
-import { sha256Hex } from '../lib/digest'
 import { getFontLatest, putFont, putFontBuilt, putFontManifest } from '../storage/fonts'
 import { getAllGrids } from '../storage/grids'
 

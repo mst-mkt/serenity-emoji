@@ -1,4 +1,4 @@
-import { concat } from '../../lib/bytes'
+import { concat } from '@serenity-emoji/lib/bytes'
 
 export const tag = (value: string) => {
   if (value.length !== 4) throw new Error(`tag must be 4 characters: ${value}`)

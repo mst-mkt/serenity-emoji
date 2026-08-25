@@ -1,4 +1,4 @@
-import { base64 } from '../../lib/base64'
+import { base64 } from '@serenity-emoji/lib/base64'
 
 const CHUNK_SIZE = 4096
 

@@ -1,4 +1,4 @@
-import { isHexChar } from '../../lib/chars'
+import { isHexChar } from '@serenity-emoji/lib/chars'
 
 export type CodePointRange = { min: number; max: number }
 

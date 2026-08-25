@@ -1,4 +1,4 @@
-import { inflate } from '../../../lib/zlib'
+import { inflate } from '@serenity-emoji/lib/zlib'
 
 type LineMeta = { width: number; height: number; depth: number; channels: number }
 

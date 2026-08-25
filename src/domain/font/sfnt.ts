@@ -1,4 +1,5 @@
-import { concat, u16, u32 } from '../../lib/bytes'
+import { concat, u16, u32 } from '@serenity-emoji/lib/bytes'
+
 import { checksum, pad4, prefixSums, struct, tag } from './write'
 
 export type Table = { tag: string; data: Uint8Array }

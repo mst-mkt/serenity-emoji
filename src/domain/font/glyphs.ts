@@ -1,4 +1,5 @@
-import { hex } from '../../lib/bytes'
+import { hex } from '@serenity-emoji/lib/bytes'
+
 import { type DotGrid, type Rgba, type Run, toRuns } from '../dot-grid'
 import { dimensionsOf } from '../image/scale'
 

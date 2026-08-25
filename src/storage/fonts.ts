@@ -1,8 +1,8 @@
+import { sha256Hex } from '@serenity-emoji/lib/digest'
 import { env } from 'cloudflare:workers'
 
 import type { FontFormat } from '../domain/font/build'
 import type { SubsetEntry } from '../domain/webfont/subsets'
-import { sha256Hex } from '../lib/digest'
 
 const latestKeyOf = (subset: string, format: FontFormat) =>
   `font/serenity-emoji.${subset}.${format}`

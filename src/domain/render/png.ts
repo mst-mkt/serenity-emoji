@@ -1,5 +1,6 @@
-import { concat, crc32, u32 } from '../../lib/bytes'
-import { deflate } from '../../lib/zlib'
+import { concat, crc32, u32 } from '@serenity-emoji/lib/bytes'
+import { deflate } from '@serenity-emoji/lib/zlib'
+
 import { pngTextRecords } from '../attribution'
 import type { DotGrid, Rgba } from '../dot-grid'
 import { SIGNATURE } from '../image/decode/chunks'

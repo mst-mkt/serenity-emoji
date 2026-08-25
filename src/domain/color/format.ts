@@ -1,4 +1,5 @@
-import { hex } from '../../lib/bytes'
+import { hex } from '@serenity-emoji/lib/bytes'
+
 import type { Rgba } from '../dot-grid'
 import { toHsl, toHwb, toLab, toLch, toOklab, toOklch } from './convert'
 

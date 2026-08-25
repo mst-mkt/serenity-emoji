@@ -1,4 +1,4 @@
-import { concat } from '../../lib/bytes'
+import { concat } from '@serenity-emoji/lib/bytes'
 
 const le16 = (value: number) => {
   return Uint8Array.from([value & 0xff, (value >> 8) & 0xff])

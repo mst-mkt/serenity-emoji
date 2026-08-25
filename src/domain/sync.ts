@@ -1,4 +1,4 @@
-import { sha256Hex } from '../lib/digest'
+import { sha256Hex } from '@serenity-emoji/lib/digest'
 
 export type TreeEntry = { name: string; sha: string }
 

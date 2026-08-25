@@ -24,7 +24,11 @@ export default defineConfig({
     '*': 'vp check --fix',
   },
   test: {
-    include: ['./src/**/*.test.{ts,tsx}', './scripts/**/*.test.{ts,tsx}'],
+    include: [
+      './src/**/*.test.{ts,tsx}',
+      './scripts/**/*.test.{ts,tsx}',
+      './packages/*/src/**/*.test.{ts,tsx}',
+    ],
   },
   fmt: {
     ignorePatterns: ['cloudflare-env.d.ts'],

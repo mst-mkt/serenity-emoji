@@ -1,6 +1,6 @@
+import { base64 } from '@serenity-emoji/lib/base64'
 import { describe, expect, it } from 'vite-plus/test'
 
-import { base64 } from '../../lib/base64'
 import { toKitty } from './kitty'
 
 describe('toKitty', () => {

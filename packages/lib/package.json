@@ -1,0 +1,14 @@
+{
+  "name": "@serenity-emoji/lib",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./base64": "./src/base64.ts",
+    "./bytes": "./src/bytes.ts",
+    "./chars": "./src/chars.ts",
+    "./chunk": "./src/chunk.ts",
+    "./digest": "./src/digest.ts",
+    "./zlib": "./src/zlib.ts"
+  }
+}

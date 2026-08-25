@@ -1,4 +1,5 @@
-import { concat, i16, u16, u32 } from '../../../lib/bytes'
+import { concat, i16, u16, u32 } from '@serenity-emoji/lib/bytes'
+
 import type { Rect } from '../glyphs'
 import { pad4, prefixSums, struct } from '../write'
 
